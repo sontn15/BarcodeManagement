@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="@dimen/_3sdp"
+    android:layout_marginRight="@dimen/_3sdp"
+    android:background="@drawable/custom_slipper_item_recycleview"
+    android:paddingStart="@dimen/_3sdp"
+    android:paddingEnd="@dimen/_3sdp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_3sdp"
+            android:orientation="horizontal"
+            android:weightSum="11">
+
+            <TextView
+                android:id="@+id/tvNameItemCart"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="10"
+                android:fontFamily="@font/roboto_regular"
+                android:gravity="left|center_vertical"
+                android:text="Cocacola pepsi 500ml ngon, bo, re"
+                android:textColor="@color/colorTextParent"
+                android:textSize="@dimen/_12ssp"
+                android:textStyle="bold" />
+
+            <ImageView
+                android:id="@+id/imvDeleteItemCart"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/_15sdp"
+                android:layout_gravity="right|center_vertical"
+                android:layout_marginTop="@dimen/_3sdp"
+                android:layout_weight="1"
+                android:foregroundGravity="center"
+                android:scaleX="0.8"
+                android:scaleY="0.8"
+                android:src="@mipmap/ic_bin" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_3sdp"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="@dimen/_8sdp"
+                android:layout_height="match_parent"
+                android:src="@mipmap/ic_money" />
+
+            <TextView
+                android:id="@+id/tvOutPriceItemCart"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fontFamily="@font/roboto_regular"
+                android:gravity="left|center_vertical"
+                android:paddingLeft="@dimen/_3sdp"
+                android:text="100.000 đ"
+                android:textColor="@color/colorCam"
+                android:textSize="@dimen/_10ssp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/llDonViItemCart"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="@dimen/_8sdp"
+                android:layout_height="match_parent"
+                android:src="@mipmap/ic_box" />
+
+            <TextView
+                android:id="@+id/tvUnitItemCart"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fontFamily="@font/roboto_regular"
+                android:gravity="left|center_vertical"
+                android:paddingLeft="@dimen/_3sdp"
+                android:text="Đơn vị: Thùng"
+                android:textSize="@dimen/_10ssp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/llTotalPriceItemCart"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_18sdp"
+            android:layout_marginTop="@dimen/_6sdp"
+            android:layout_marginBottom="@dimen/_6sdp"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnMinItemCart"
+                style="?android:attr/borderlessButtonStyle"
+                android:layout_width="@dimen/_30sdp"
+                android:layout_height="match_parent"
+                android:background="@drawable/edt_custom"
+                android:gravity="center"
+                android:text="-"
+                android:textColor="@color/black_mo_2"
+                android:textSize="@dimen/_12ssp" />
+
+            <TextView
+                android:id="@+id/tvQuantityItemCart"
+                android:layout_width="@dimen/_40sdp"
+                android:layout_height="match_parent"
+                android:fontFamily="@font/roboto_regular"
+                android:gravity="center"
+                android:text="100"
+                android:textColor="@color/black"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/btnPlusItemCart"
+                style="?android:attr/borderlessButtonStyle"
+                android:layout_width="@dimen/_30sdp"
+                android:layout_height="match_parent"
+                android:background="@drawable/edt_custom"
+                android:gravity="center"
+                android:text="+"
+                android:textColor="@color/black_mo_2"
+                android:textSize="@dimen/_12ssp" />
+
+            <TextView
+                android:id="@+id/tvTotalPriceItemCart"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fontFamily="@font/roboto_regular"
+                android:gravity="end|center_vertical"
+                android:text="1.220.000 đ"
+                android:textColor="@color/colorTextChild"
+                android:textSize="@dimen/_12ssp"
+                android:textStyle="bold" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/colorGachChan" />
+</RelativeLayout>
