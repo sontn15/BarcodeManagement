@@ -19,22 +19,23 @@ public class Item implements Parcelable {
     private String name;
     private Long giaNhap;
     private Long giaBanLe;
+    private Long giaBuon;
+    private Long giaDaiLy;
 
     private Long unitMin;
     private Unit unitMinObj;
 
-    private boolean status;
+    private Long unitDefault;
+    private Unit unitDefaultObj;
+
+    private Long unit1;
+    private Unit unit1Obj;
+    private Long quyCach1;
+    private Long giaQuyDoi1;
+
     private Long storeId;
-
-    private Long type;  //1. Kich thuoc, 2. Vat tu, 3. Dich vu, 4. Van tai
-
-    private Long tonVien;
-
-    private Long chotVien;
-
-    private Long tNhapVien;
-
-    private Long tXuatVien;
+    private boolean status;
+    private String barcode;
 
 
     protected Item(Parcel in) {
@@ -56,42 +57,50 @@ public class Item implements Parcelable {
             giaBanLe = in.readLong();
         }
         if (in.readByte() == 0) {
+            giaBuon = null;
+        } else {
+            giaBuon = in.readLong();
+        }
+        if (in.readByte() == 0) {
+            giaDaiLy = null;
+        } else {
+            giaDaiLy = in.readLong();
+        }
+        if (in.readByte() == 0) {
             unitMin = null;
         } else {
             unitMin = in.readLong();
         }
         unitMinObj = in.readParcelable(Unit.class.getClassLoader());
-        status = in.readByte() != 0;
+        if (in.readByte() == 0) {
+            unitDefault = null;
+        } else {
+            unitDefault = in.readLong();
+        }
+        unitDefaultObj = in.readParcelable(Unit.class.getClassLoader());
+        if (in.readByte() == 0) {
+            unit1 = null;
+        } else {
+            unit1 = in.readLong();
+        }
+        unit1Obj = in.readParcelable(Unit.class.getClassLoader());
+        if (in.readByte() == 0) {
+            quyCach1 = null;
+        } else {
+            quyCach1 = in.readLong();
+        }
+        if (in.readByte() == 0) {
+            giaQuyDoi1 = null;
+        } else {
+            giaQuyDoi1 = in.readLong();
+        }
         if (in.readByte() == 0) {
             storeId = null;
         } else {
             storeId = in.readLong();
         }
-        if (in.readByte() == 0) {
-            type = null;
-        } else {
-            type = in.readLong();
-        }
-        if (in.readByte() == 0) {
-            tonVien = null;
-        } else {
-            tonVien = in.readLong();
-        }
-        if (in.readByte() == 0) {
-            chotVien = null;
-        } else {
-            chotVien = in.readLong();
-        }
-        if (in.readByte() == 0) {
-            tNhapVien = null;
-        } else {
-            tNhapVien = in.readLong();
-        }
-        if (in.readByte() == 0) {
-            tXuatVien = null;
-        } else {
-            tXuatVien = in.readLong();
-        }
+        status = in.readByte() != 0;
+        barcode = in.readString();
     }
 
     public static final Creator<Item> CREATOR = new Creator<Item>() {
@@ -133,6 +142,18 @@ public class Item implements Parcelable {
             dest.writeByte((byte) 1);
             dest.writeLong(giaBanLe);
         }
+        if (giaBuon == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeLong(giaBuon);
+        }
+        if (giaDaiLy == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeLong(giaDaiLy);
+        }
         if (unitMin == null) {
             dest.writeByte((byte) 0);
         } else {
@@ -140,42 +161,39 @@ public class Item implements Parcelable {
             dest.writeLong(unitMin);
         }
         dest.writeParcelable(unitMinObj, flags);
-        dest.writeByte((byte) (status ? 1 : 0));
+        if (unitDefault == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeLong(unitDefault);
+        }
+        dest.writeParcelable(unitDefaultObj, flags);
+        if (unit1 == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeLong(unit1);
+        }
+        dest.writeParcelable(unit1Obj, flags);
+        if (quyCach1 == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeLong(quyCach1);
+        }
+        if (giaQuyDoi1 == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeLong(giaQuyDoi1);
+        }
         if (storeId == null) {
             dest.writeByte((byte) 0);
         } else {
             dest.writeByte((byte) 1);
             dest.writeLong(storeId);
         }
-        if (type == null) {
-            dest.writeByte((byte) 0);
-        } else {
-            dest.writeByte((byte) 1);
-            dest.writeLong(type);
-        }
-        if (tonVien == null) {
-            dest.writeByte((byte) 0);
-        } else {
-            dest.writeByte((byte) 1);
-            dest.writeLong(tonVien);
-        }
-        if (chotVien == null) {
-            dest.writeByte((byte) 0);
-        } else {
-            dest.writeByte((byte) 1);
-            dest.writeLong(chotVien);
-        }
-        if (tNhapVien == null) {
-            dest.writeByte((byte) 0);
-        } else {
-            dest.writeByte((byte) 1);
-            dest.writeLong(tNhapVien);
-        }
-        if (tXuatVien == null) {
-            dest.writeByte((byte) 0);
-        } else {
-            dest.writeByte((byte) 1);
-            dest.writeLong(tXuatVien);
-        }
+        dest.writeByte((byte) (status ? 1 : 0));
+        dest.writeString(barcode);
     }
 }

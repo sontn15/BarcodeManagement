@@ -1,6 +1,148 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_35sdp"
+        android:background="@color/colorItemClick"
+        android:fontFamily="@font/roboto_regular"
+        android:gravity="center_vertical"
+        android:paddingStart="@dimen/_6sdp"
+        android:text="@string/thong_tin_may_in"
+        android:textSize="@dimen/_13ssp"
+        android:textStyle="bold"
+        tools:ignore="RtlSymmetry" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_35sdp"
+        android:layout_margin="@dimen/_5sdp"
+        android:orientation="horizontal"
+        android:weightSum="3"
+        tools:ignore="UselessParent">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:fontFamily="@font/roboto_regular"
+            android:gravity="center_vertical"
+            android:text="@string/dia_chi_ip"
+            android:textSize="@dimen/_13ssp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/edtIPSetting"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:background="@drawable/edt_custom"
+            android:fontFamily="@font/roboto_regular"
+            android:inputType="text"
+            android:maxLength="30"
+            android:padding="@dimen/_8sdp"
+            android:textSize="@dimen/_14ssp"
+            android:textStyle="bold"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_35sdp"
+        android:layout_margin="@dimen/_5sdp"
+        android:orientation="horizontal"
+        android:weightSum="3"
+        tools:ignore="UselessParent">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:fontFamily="@font/roboto_regular"
+            android:gravity="center_vertical"
+            android:text="@string/kho_giay_in"
+            android:textSize="@dimen/_13ssp"
+            android:textStyle="bold" />
+
+        <RadioGroup
+            android:id="@+id/rdGroupTypePageSetting"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/_40sdp"
+            android:layout_weight="2"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/rb58mm"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:fontFamily="@font/roboto_regular"
+                android:text="@string/_58mm"
+                android:textStyle="bold" />
+
+            <RadioButton
+                android:id="@+id/rb80mm"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginStart="@dimen/_10sdp"
+                android:checked="true"
+                android:fontFamily="@font/roboto_regular"
+                android:text="@string/_80mm"
+                android:textStyle="bold" />
+        </RadioGroup>
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btnConnectSetting"
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_32sdp"
+        android:layout_margin="@dimen/_5sdp"
+        android:background="@drawable/shape_button_cam"
+        android:fontFamily="@font/roboto_regular"
+        android:text="@string/ket_noi_may_in"
+        android:textColor="@color/white"
+        android:textSize="@dimen/_11ssp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_35sdp"
+        android:layout_marginTop="@dimen/_3sdp"
+        android:background="@color/colorItemClick"
+        android:fontFamily="@font/roboto_regular"
+        android:gravity="center_vertical"
+        android:paddingStart="@dimen/_6sdp"
+        android:text="@string/thong_tin_ket_noi"
+        android:textSize="@dimen/_13ssp"
+        android:textStyle="bold"
+        tools:ignore="RtlSymmetry" />
+
+    <TextView
+        android:id="@+id/tvInfoConnectSetting"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_30sdp"
+        android:fontFamily="@font/roboto_regular"
+        android:gravity="center_vertical"
+        android:paddingStart="@dimen/_6sdp"
+        android:textColor="@color/colorTextChild"
+        android:textSize="@dimen/_13ssp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tvStatusConnectSetting"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_30sdp"
+        android:fontFamily="@font/roboto_regular"
+        android:gravity="center_vertical"
+        android:paddingStart="@dimen/_6sdp"
+        android:textColor="@color/colorTextChild"
+        android:textSize="@dimen/_13ssp"
+        android:textStyle="bold" />
+
+</LinearLayout>

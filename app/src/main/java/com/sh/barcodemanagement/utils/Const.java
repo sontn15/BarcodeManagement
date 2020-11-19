@@ -6,8 +6,8 @@ public class Const {
     public static final String KEY_IS_VIEW_BILL_DETAIL = "keyIsViewBillDetail";
 
     public static class KEY_SHARE_PREFERENCE {
-        public static final String KEY_CUSTOMER = "keyCustomer";
         public static final String KEY_STORE = "keyStore";
+        public static final String KEY_IP_PRINTER = "keyIPPrinter";
         public static final String KEY_MY_EMPLOYEE = "employeeLogin";
         public static final String KEY_BILL_CREATED = "keyBillCreated";
         public static final String KEY_LIST_CUSTOMER = "keyListCustomer";

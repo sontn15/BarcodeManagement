@@ -50,4 +50,7 @@ dependencies {
     compileOnly 'org.projectlombok:lombok:1.18.16'
     annotationProcessor 'org.projectlombok:lombok:1.18.16'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
+    implementation 'me.dm7.barcodescanner:zxing:1.9'
+    implementation 'com.github.arcadefire:nice-spinner:1.4.4'
+    compile files('libs/posprinterconnectandsendsdk.jar')
 }

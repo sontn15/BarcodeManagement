@@ -9,11 +9,11 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.sh.barcodemanagement.R;
 import com.sh.barcodemanagement.database.MySharedPreferences;
 import com.sh.barcodemanagement.model.Store;
@@ -88,7 +88,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 //        String username = edtUsername.getText().toString();
 //        String password = edtPassword.getText().toString();
 //        if (username.isEmpty() || password.isEmpty()) {
-//            Toast.makeText(LoginActivity.this, getResources().getString(R.string.vui_long_nhap_day_du_thong_tin), Toast.LENGTH_SHORT).show();
+//        showSnackBar(getResources().getString(R.string.vui_long_nhap_day_du_thong_tin));
 //            return;
 //        }
 //        checkUserLogin(username, password);
@@ -114,20 +114,26 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         startActivity(new Intent(LoginActivity.this, MainActivity.class));
                         finish();
                     } else {
-                        Toast.makeText(LoginActivity.this, getResources().getString(R.string.taikhoan_matkhau_khong_dung), Toast.LENGTH_SHORT).show();
+                        showSnackBar(getResources().getString(R.string.taikhoan_matkhau_khong_dung));
                     }
                     ResourceUtils.showProgressDialog(progressDialog);
                 }
 
                 @Override
                 public void onFailure(Call<Store> call, Throwable t) {
-                    Toast.makeText(LoginActivity.this, getResources().getString(R.string.dang_nhap_thai_bai), Toast.LENGTH_SHORT).show();
+                    showSnackBar(getResources().getString(R.string.dang_nhap_thai_bai));
                     ResourceUtils.showProgressDialog(progressDialog);
                 }
             });
         } else {
-            Toast.makeText(LoginActivity.this, getResources().getString(R.string.check_connection_network), Toast.LENGTH_SHORT).show();
+            showSnackBar(getResources().getString(R.string.check_connection_network));
             ResourceUtils.showProgressDialog(progressDialog);
         }
     }
+
+    private void showSnackBar(String text) {
+        Snackbar.make(getCurrentFocus(), text, Snackbar.LENGTH_SHORT)
+                .setActionTextColor(getResources().getColor(R.color.button_unable)).show();
+    }
+
 }

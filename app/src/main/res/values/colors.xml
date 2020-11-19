@@ -4,7 +4,7 @@
     <color name="colorAccent">#DD5050</color>
     <color name="colorPrimaryMo">#66BB6A</color>
     <color name="colorPrimaryDark">#66BB6A</color>
-    <color name="colorPrimaryPress">#A866BB6A</color>
+    <color name="colorPrimaryPress">#319836</color>
 
     <color name="black">#000000</color>
     <color name="blackMoMo">#777777</color>
@@ -18,9 +18,10 @@
     <color name="colorTextParent">#C4040503</color>
     <color name="colorTextChild">#115D80</color>
     <color name="colorGachChan">#f7f7f7</color>
-    <color name="colorButton">#1DA1F2</color>
+    <color name="colorButtonGreen">#1DA1F2</color>
+    <color name="button_unable">#cccccc</color>
     <color name="colorVinID">#F84040</color>
     <color name="colorVinIDPress">#E44343</color>
     <color name="colorCam">#F57C00</color>
-    <color name="colorCamPress">#FF6D00</color>
+    <color name="colorCamPress">#D36B00</color>
 </resources>

@@ -9,6 +9,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.reflect.TypeToken;
 import com.sh.barcodemanagement.model.Bill;
 import com.sh.barcodemanagement.model.Item;
+import com.sh.barcodemanagement.model.ItemInCart;
 import com.sh.barcodemanagement.model.Store;
 import com.sh.barcodemanagement.model.SubBill;
 
@@ -138,7 +139,8 @@ public class MySharedPreferences {
         return listItems;
     }
 
-    public void putListSubBillInCart(String key, List<SubBill> listItems) {
+
+    public void putListItemInCart(String key, List<ItemInCart> listItems) {
         SharedPreferences pref = mContext.getSharedPreferences(MY_SHARE_PREFERENCES, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = pref.edit();
         Gson gson = new GsonBuilder().create();
@@ -147,13 +149,13 @@ public class MySharedPreferences {
         editor.apply();
     }
 
-    public List<SubBill> getListSubBillInCart(String key) {
+    public List<ItemInCart> getListItemInCart(String key) {
         Gson gson = new Gson();
-        List<SubBill> listItems;
+        List<ItemInCart> listItems;
         SharedPreferences sharedPref = mContext.getSharedPreferences(MY_SHARE_PREFERENCES, Context.MODE_PRIVATE);
         String jsonPreferences = sharedPref.getString(key, "");
 
-        Type type = new TypeToken<List<SubBill>>() {
+        Type type = new TypeToken<List<ItemInCart>>() {
         }.getType();
         listItems = gson.fromJson(jsonPreferences, type);
 

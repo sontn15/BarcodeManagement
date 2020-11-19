@@ -7,14 +7,14 @@
 
     <fragment
         android:id="@+id/nav_ban_hang"
-        android:name="com.sh.barcodemanagement.ui.fragment.SanPhamFragment"
+        android:name="com.sh.barcodemanagement.ui.fragment.ItemFragment"
         android:label="@string/menu_ban_hang"
-        tools:layout="@layout/fragment_gio_hang" />
+        tools:layout="@layout/activity_cart" />
 
     <fragment
         android:id="@+id/nav_cai_dat"
         android:name="com.sh.barcodemanagement.ui.fragment.SettingFragment"
         android:label="@string/menu_cai_dat"
-        tools:layout="@layout/fragment_gio_hang" />
+        tools:layout="@layout/activity_cart" />
 
 </navigation>

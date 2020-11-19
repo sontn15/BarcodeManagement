@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">BarcodeManagement</string>
+    <string name="app_name">Bán Hàng</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_title">Android Studio</string>
@@ -144,4 +144,16 @@
     <string name="chonsanphamkhac">Chọn sản phẩm khác</string>
     <string name="menu_ban_hang">Bán hàng</string>
     <string name="menu_cai_dat">Cài đặt</string>
+    <string name="dia_chi_ip">IP Máy in</string>
+    <string name="_58mm">58mm</string>
+    <string name="_80mm">80mm</string>
+    <string name="kho_giay_in">Khổ giấy</string>
+    <string name="thong_tin_ket_noi">Thông tin kết nối</string>
+    <string name="thong_tin_may_in">Thông tin máy in</string>
+    <string name="nhap_ip_may_in">Nhập IP máy in</string>
+    <string name="ket_noi_thanh_cong">Kết nối thành công</string>
+    <string name="ket_noi_that_bai">Kết nối thất bại</string>
+    <string name="can_ket_noi_may_in">Bạn cần kết nối máy in</string>
+    <string name="da_ketnoi_truoc">Đã kết nối máy in trước đó</string>
+    <string name="tong_tien_button">0 sản phẩm = 0đ</string>
 </resources>

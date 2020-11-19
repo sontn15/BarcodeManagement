@@ -19,7 +19,7 @@ import com.sh.barcodemanagement.utils.StringFormatUtils;
 
 import java.util.List;
 
-public class GioHangAdapter extends RecyclerView.Adapter<GioHangAdapter.SubBillCartViewHolder> {
+public class CartAdapter extends RecyclerView.Adapter<CartAdapter.SubBillCartViewHolder> {
 
     public interface OnChildItemInCartClickListener {
         void onPlusClick(SubBill item);
@@ -37,10 +37,10 @@ public class GioHangAdapter extends RecyclerView.Adapter<GioHangAdapter.SubBillC
     private List<SubBill> arrItems;
     private OnChildItemInCartClickListener listener;
 
-    public GioHangAdapter(Context mContext,
-                          Store storeCurrent,
-                          List<SubBill> arrItems,
-                          OnChildItemInCartClickListener listener) {
+    public CartAdapter(Context mContext,
+                       Store storeCurrent,
+                       List<SubBill> arrItems,
+                       OnChildItemInCartClickListener listener) {
         this.mContext = mContext;
         this.storeCurrent = storeCurrent;
         this.arrItems = arrItems;
@@ -51,7 +51,7 @@ public class GioHangAdapter extends RecyclerView.Adapter<GioHangAdapter.SubBillC
     @Override
     public SubBillCartViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(mContext);
-        View view = inflater.inflate(R.layout.item_san_pham_gio_hang, parent, false);
+        View view = inflater.inflate(R.layout.item_good_cart, parent, false);
         return new SubBillCartViewHolder(view);
     }
 

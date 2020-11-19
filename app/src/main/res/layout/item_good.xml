@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/_60sdp"
+    android:layout_height="wrap_content"
     android:layout_marginLeft="@dimen/_3sdp"
     android:layout_marginRight="@dimen/_3sdp"
     android:background="@drawable/custom_slipper_item_recycleview"
@@ -11,7 +11,7 @@
     <LinearLayout
         android:id="@+id/llItem"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:weightSum="5">
 
@@ -19,32 +19,32 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="4"
-            android:orientation="vertical"
-            android:weightSum="2">
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/tvNameItem"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:layout_marginBottom="@dimen/_5sdp"
                 android:fontFamily="@font/roboto_regular"
                 android:gravity="left|center_vertical"
-                android:maxLines="2"
+                android:maxLines="3"
                 android:text="Cocacola pepsi 500ml ngon, bo, re"
-                android:textColor="@color/colorTextParent"
-                android:textSize="@dimen/_11ssp"
+                android:textColor="@color/colorTextChild"
+                android:textSize="@dimen/_10ssp"
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/tvMaSPItem"
+                android:id="@+id/tvDonViItem"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
+                android:layout_height="@dimen/_20sdp"
+                android:layout_marginBottom="@dimen/_5sdp"
                 android:fontFamily="@font/roboto_regular"
                 android:gravity="left|center_vertical"
                 android:text="Don vi: Thung"
-                android:textColor="@color/colorTextChild"
-                android:textSize="@dimen/_10ssp" />
+                android:textSize="@dimen/_9ssp"
+                android:textStyle="bold" />
         </LinearLayout>
 
         <TextView

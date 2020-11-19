@@ -18,15 +18,16 @@ import com.sh.barcodemanagement.utils.StringFormatUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SearchSanPhamAdapter extends RecyclerView.Adapter<SearchSanPhamAdapter.SearchSanPhamViewHolder> implements Filterable {
-    private Context mContext;
-    private List<Item> lstItems;
+public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder> implements Filterable {
+    private final Context mContext;
+    private final List<Item> lstItems;
     private List<Item> lstFiltered;
-    private OnItemClickListener onItemClickListener;
+    private final OnItemClickListener onItemClickListener;
 
-    public SearchSanPhamAdapter(Context mContext,
-                                List<Item> lstItems,
-                                OnItemClickListener onItemClickListener) {
+
+    public ItemAdapter(Context mContext,
+                       List<Item> lstItems,
+                       OnItemClickListener onItemClickListener) {
         this.mContext = mContext;
         this.lstItems = lstItems;
         this.lstFiltered = lstItems;
@@ -35,24 +36,27 @@ public class SearchSanPhamAdapter extends RecyclerView.Adapter<SearchSanPhamAdap
 
     @NonNull
     @Override
-    public SearchSanPhamViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public ItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(mContext);
-        View view = inflater.inflate(R.layout.item_san_pham, parent, false);
-        return new SearchSanPhamViewHolder(view);
+        View view = inflater.inflate(R.layout.item_good, parent, false);
+        return new ItemViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull SearchSanPhamViewHolder holder, int position) {
-        Item item = lstFiltered.get(position);
-        holder.tvMaSP.setText("Mã SP: " + (item.getCode() != null ? item.getCode() : ""));
+    public void onBindViewHolder(@NonNull ItemViewHolder holder, int position) {
+        Item item = lstItems.get(position);
+
         holder.tvPriceItem.setText(StringFormatUtils.convertToStringMoneyVND(item.getGiaBanLe()));
         holder.tvItemName.setText(item.getName() != null ? item.getName() : "Tên sản phẩm chưa cập nhật");
-        holder.itemView.setOnClickListener(view -> onItemClickListener.onClickItem(item));
+        holder.tvDonVi.setText((item.getUnitDefaultObj() != null && item.getUnitDefaultObj().getName() != null) ?
+                (item.getUnitDefaultObj().getName()) : "Không có đơn vị mặc định");
+
+        holder.itemView.setOnClickListener(view -> onItemClickListener.onClickItem(position));
     }
 
     @Override
     public int getItemCount() {
-        if (lstFiltered != null) {
+        if (lstItems != null) {
             return lstFiltered.size();
         } else {
             return 0;
@@ -60,15 +64,16 @@ public class SearchSanPhamAdapter extends RecyclerView.Adapter<SearchSanPhamAdap
     }
 
     public interface OnItemClickListener {
-        void onClickItem(Item item);
+        void onClickItem(int position);
     }
 
-    public static class SearchSanPhamViewHolder extends RecyclerView.ViewHolder {
-        protected TextView tvItemName, tvPriceItem, tvMaSP;
 
-        public SearchSanPhamViewHolder(@NonNull View itemView) {
+    public static class ItemViewHolder extends RecyclerView.ViewHolder {
+        protected TextView tvItemName, tvPriceItem, tvDonVi;
+
+        public ItemViewHolder(@NonNull View itemView) {
             super(itemView);
-            tvMaSP = itemView.findViewById(R.id.tvMaSPItem);
+            tvDonVi = itemView.findViewById(R.id.tvDonViItem);
             tvItemName = itemView.findViewById(R.id.tvNameItem);
             tvPriceItem = itemView.findViewById(R.id.tvPriceItem);
         }
@@ -87,6 +92,7 @@ public class SearchSanPhamAdapter extends RecyclerView.Adapter<SearchSanPhamAdap
         return mFilter;
     }
 
+
     //filter class
     private class SearchFilters extends Filter {
 
@@ -97,16 +103,15 @@ public class SearchSanPhamAdapter extends RecyclerView.Adapter<SearchSanPhamAdap
                 lstFiltered = lstItems;
             } else {
                 str = StringFormatUtils.convertUTF8ToString(str.toString().trim().toLowerCase());
-
                 List<Item> lstRecordFilters = new ArrayList<>();
                 for (Item obj : lstItems) {
-                    String name = obj.getName() != null ? StringFormatUtils.convertUTF8ToString(obj.getName().trim().toLowerCase()) : "";
                     String code = obj.getCode() != null ? StringFormatUtils.convertUTF8ToString(obj.getCode().trim().toLowerCase()) : "";
-                    String giaBanLe = obj.getGiaBanLe() != null ? StringFormatUtils.convertUTF8ToString(String.valueOf(obj.getGiaBanLe())) : "";
+                    String name = obj.getName() != null ? StringFormatUtils.convertUTF8ToString(obj.getName().trim().toLowerCase()) : "";
+                    String barCode = obj.getBarcode() != null ? StringFormatUtils.convertUTF8ToString(obj.getBarcode().trim().toLowerCase()) : "";
                     assert str != null;
-                    if ((name != null && name.contains(str.toString()))
-                            || (code != null && code.contains(str.toString()))
-                            || (giaBanLe != null && giaBanLe.contains(str.toString()))) {
+                    if ((code != null && code.contains(str))
+                            || (name != null && name.contains(str))
+                            || (barCode != null && barCode.contains(str))) {
                         lstRecordFilters.add(obj);
                     }
                 }
@@ -124,5 +129,6 @@ public class SearchSanPhamAdapter extends RecyclerView.Adapter<SearchSanPhamAdap
             notifyDataSetChanged();
         }
     }
+
 
 }

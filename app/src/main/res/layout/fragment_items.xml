@@ -2,33 +2,34 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/white">
 
     <RelativeLayout
         android:id="@+id/rlSearchBanHang"
         android:layout_width="match_parent"
         android:layout_height="@dimen/_40sdp"
         android:layout_alignParentTop="true"
-        android:layout_marginStart="@dimen/_3sdp"
-        android:layout_marginTop="@dimen/_3sdp"
-        android:layout_marginEnd="@dimen/_3sdp"
+        android:background="@drawable/shape_bg_app"
         android:focusableInTouchMode="true">
 
         <EditText
             android:id="@+id/edtSearchBanHang"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@drawable/edt_custom_trang"
+            android:layout_marginLeft="@dimen/_3sdp"
+            android:layout_marginRight="@dimen/_3sdp"
+            android:layout_marginBottom="@dimen/_3sdp"
+            android:background="@color/white"
             android:fontFamily="@font/roboto_regular"
             android:gravity="center_vertical"
             android:hint="@string/nhap_ten_khach_hang_timkiem"
             android:imeOptions="actionDone"
-            android:importantForAutofill="no"
             android:inputType="text"
             android:maxLength="50"
             android:padding="@dimen/_8sdp"
             android:singleLine="true"
-            android:textSize="@dimen/_15ssp" />
+            android:textSize="@dimen/_14ssp" />
 
         <ImageView
             android:id="@+id/imvBarCodeBanHang"
@@ -36,7 +37,8 @@
             android:layout_height="match_parent"
             android:layout_alignParentEnd="true"
             android:layout_alignParentBottom="true"
-            android:layout_marginEnd="@dimen/_10sdp"
+            android:layout_marginEnd="@dimen/_5sdp"
+            android:layout_marginBottom="@dimen/_3sdp"
             android:src="@drawable/ic_barcode"
             tools:ignore="ContentDescription" />
     </RelativeLayout>
@@ -45,6 +47,24 @@
         android:id="@+id/rcvSanPhamBanHang"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/rlSearchBanHang" />
+        android:layout_above="@+id/btnTotal"
+        android:layout_below="@+id/rlSearchBanHang"
+        android:layout_marginTop="@dimen/_3sdp" />
 
+    <Button
+        android:id="@+id/btnTotal"
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_40sdp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="@dimen/_3sdp"
+        android:layout_marginTop="@dimen/_6sdp"
+        android:layout_marginRight="@dimen/_3sdp"
+        android:layout_marginBottom="@dimen/_6sdp"
+        android:background="@drawable/shape_button_app"
+        android:fontFamily="@font/roboto_regular"
+        android:text="@string/tong_tien_button"
+        android:textColor="@color/white"
+        android:textSize="@dimen/_14ssp"
+        android:textStyle="bold" />
 </RelativeLayout>
