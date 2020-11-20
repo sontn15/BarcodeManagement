@@ -17,9 +17,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.sh.barcodemanagement.R;
 import com.sh.barcodemanagement.adapter.ItemAdapter;
 import com.sh.barcodemanagement.database.MySharedPreferences;
@@ -40,17 +42,17 @@ import java.util.List;
 
 public class ItemFragment extends Fragment implements View.OnClickListener, OnSpinnerItemSelectedListener {
     private View mView;
-    private Button btnTotal;
+    public static Button btnTotal;
     private EditText edtSearch;
     private ImageView imvScanner;
     private RecyclerView rcvItem;
     private ProgressDialog progressDialog;
 
-    private View mViewDialog;
+    private View dialog;
     private NiceSpinner unitSpinner;
     private AlertDialog addItemDialog;
-    private Button btnItemMinusDialog, btnItemPlusDialog, btnAddItemDialog;
-    private TextView tvItemNameDialog, tvTotalPriceDialog, tvPriceItemDialog, tvItemNumOrderDialog;
+    private Button btnMinusDlg, btnPlusDlg, btnSubmitAddDlg;
+    private TextView tvNameDlg, tvTotalPriceDlg, tvPriceDlg, tvQuantityDlg;
 
     private ItemInCart itemInCart;
     private List<Item> listItems;
@@ -62,17 +64,48 @@ public class ItemFragment extends Fragment implements View.OnClickListener, OnSp
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.fragment_items, container, false);
         initView();
+        ResourceUtils.showProgressDialog(progressDialog);
         initData();
         initAdapter();
         initDialogAddItem();
+        ResourceUtils.hiddenProgressDialog(progressDialog);
         return mView;
     }
 
     private void initData() {
         listItems = new ArrayList<>();
-        preferences = new MySharedPreferences(requireContext());
-
         listItems.addAll(ResourceUtils.buildListItems());
+
+        preferences = new MySharedPreferences(requireContext());
+        if (preferences.getListItemInCart(Const.KEY_SHARE_PREFERENCE.KEY_LIST_ITEM_CART) != null) {
+            List<ItemInCart> lstItemCart = preferences.getListItemInCart(Const.KEY_SHARE_PREFERENCE.KEY_LIST_ITEM_CART);
+            calculatorCurrentTotalPrice(lstItemCart);
+        }
+    }
+
+    private void initAdapter() {
+        itemAdapter = new ItemAdapter(requireContext(), listItems, position -> {
+            //Set data for dialog
+            Item itemClick = listItems.get(position);
+            itemInCart = ItemInCart.builder().id(itemClick.getId()).quantity(1L).item(itemClick)
+                    .unitChoose(itemClick.getUnitDefaultObj() != null ? itemClick.getUnitDefaultObj() : new Unit())
+                    .unitCoSo(itemClick.getUnitMin()).heSoCoSo(1L).heSoCoSo(ResourceUtils.buildHeSoCoSoForItemInCart(itemClick)).build();
+            Long price = ResourceUtils.getPriceDefaultOfItemForCustomer(itemInCart.getItem());
+            itemInCart.setPrice(price);
+            itemInCart.setTotal(price);
+
+            tvQuantityDlg.setText(String.valueOf(1L));
+            tvPriceDlg.setText(StringFormatUtils.convertToStringMoneyVND(itemInCart.getPrice()));
+            tvTotalPriceDlg.setText(StringFormatUtils.convertToStringMoneyVND(itemInCart.getTotal()));
+            tvNameDlg.setText(itemInCart.getItem().getName() != null ? itemInCart.getItem().getName() : "");
+
+            List<Unit> lstUnits = new ArrayList<>(ResourceUtils.buildListUnitInItem(itemInCart));
+            unitSpinner.attachDataSource(lstUnits);
+            unitSpinner.setSelectedIndex(0);
+
+            ResourceUtils.showAlertDialog(addItemDialog);
+        });
+        rcvItem.setAdapter(itemAdapter);
     }
 
     private void initView() {
@@ -83,6 +116,7 @@ public class ItemFragment extends Fragment implements View.OnClickListener, OnSp
         rcvItem = mView.findViewById(R.id.rcvSanPhamBanHang);
         LinearLayoutManager layoutManager = new LinearLayoutManager(requireContext());
         layoutManager.setOrientation(RecyclerView.VERTICAL);
+        rcvItem.setItemAnimator(new DefaultItemAnimator());
         rcvItem.setLayoutManager(layoutManager);
 
         progressDialog = new ProgressDialog(requireContext());
@@ -113,50 +147,25 @@ public class ItemFragment extends Fragment implements View.OnClickListener, OnSp
 
     private void initDialogAddItem() {
         addItemDialog = new AlertDialog.Builder(requireActivity(), R.style.CustomAlertDialog).create();
-        mViewDialog = getLayoutInflater().inflate(R.layout.dialog_add_item, null);
+        dialog = getLayoutInflater().inflate(R.layout.dialog_add_item, null);
 
-        unitSpinner = mViewDialog.findViewById(R.id.spnDonViItemDialog);
-        tvItemNameDialog = mViewDialog.findViewById(R.id.tvItemNameDialog);
-        btnAddItemDialog = mViewDialog.findViewById(R.id.btnAddItemDialog);
-        btnItemPlusDialog = mViewDialog.findViewById(R.id.btnItemPlusDialog);
-        tvPriceItemDialog = mViewDialog.findViewById(R.id.tvPriceItemDialog);
-        tvTotalPriceDialog = mViewDialog.findViewById(R.id.tvTotalPriceDialog);
-        btnItemMinusDialog = mViewDialog.findViewById(R.id.btnItemMinusDialog);
-        tvItemNumOrderDialog = mViewDialog.findViewById(R.id.tvItemNumOrderDialog);
-        addItemDialog.setView(mViewDialog);
+        tvNameDlg = dialog.findViewById(R.id.tvItemNameDialog);
+        btnPlusDlg = dialog.findViewById(R.id.btnItemPlusDialog);
+        tvPriceDlg = dialog.findViewById(R.id.tvPriceItemDialog);
+        btnMinusDlg = dialog.findViewById(R.id.btnItemMinusDialog);
+        unitSpinner = dialog.findViewById(R.id.spnDonViItemDialog);
+        btnSubmitAddDlg = dialog.findViewById(R.id.btnAddItemDialog);
+        tvTotalPriceDlg = dialog.findViewById(R.id.tvTotalPriceDialog);
+        tvQuantityDlg = dialog.findViewById(R.id.tvItemNumOrderDialog);
+        addItemDialog.setView(dialog);
 
-        btnAddItemDialog.setOnClickListener(this);
-        btnItemPlusDialog.setOnClickListener(this);
-        btnItemMinusDialog.setOnClickListener(this);
+        btnPlusDlg.setOnClickListener(this);
+        btnMinusDlg.setOnClickListener(this);
+        btnSubmitAddDlg.setOnClickListener(this);
         unitSpinner.setOnSpinnerItemSelectedListener(this);
 
-        btnAddItemDialog.setTransformationMethod(null);
-        btnItemPlusDialog.setTransformationMethod(null);
-    }
-
-    private void initAdapter() {
-        itemAdapter = new ItemAdapter(requireContext(), listItems, position -> {
-            //Set data for dialog
-            Item itemClick = listItems.get(position);
-            itemInCart = ItemInCart.builder().id(itemClick.getId()).quantity(1L).item(itemClick)
-                    .unitChoose(itemClick.getUnitDefaultObj() != null ? itemClick.getUnitDefaultObj() : new Unit())
-                    .unitCoSo(itemClick.getUnitMin()).heSoCoSo(1L).heSoCoSo(ResourceUtils.buildHeSoCoSoForItemInCart(itemClick)).build();
-            Long price = ResourceUtils.getPriceDefaultOfItemForCustomer(itemInCart.getItem());
-            itemInCart.setPrice(price);
-            itemInCart.setTotal(price);
-
-            tvItemNumOrderDialog.setText(String.valueOf(1L));
-            tvPriceItemDialog.setText(StringFormatUtils.convertToStringMoneyVND(itemInCart.getPrice()));
-            tvTotalPriceDialog.setText(StringFormatUtils.convertToStringMoneyVND(itemInCart.getTotal()));
-            tvItemNameDialog.setText(itemInCart.getItem().getName() != null ? itemInCart.getItem().getName() : "");
-
-            List<Unit> lstUnits = new ArrayList<>(ResourceUtils.buildListUnitInItem(itemInCart));
-            unitSpinner.attachDataSource(lstUnits);
-            unitSpinner.setSelectedIndex(0);
-
-            ResourceUtils.showAlertDialog(addItemDialog);
-        });
-        rcvItem.setAdapter(itemAdapter);
+        btnMinusDlg.setTransformationMethod(null);
+        btnMinusDlg.setTransformationMethod(null);
     }
 
     @Override
@@ -171,42 +180,46 @@ public class ItemFragment extends Fragment implements View.OnClickListener, OnSp
                 break;
             }
             case R.id.btnItemPlusDialog: {
-                onClickPlusButtonDialog();
+                onClickPlusDialog();
                 break;
             }
             case R.id.btnItemMinusDialog: {
-                onClickMinusButtonDialog();
+                onClickMinusDialog();
                 break;
             }
             case R.id.btnAddItemDialog: {
-                onClickAddItemDialog();
+                onClickSubmitDialog();
                 break;
             }
         }
-    }
-
-    private void onClickButtonTotal() {
-        startActivity(new Intent(requireActivity(), CartActivity.class));
     }
 
     private void onClickBarCodeScanner() {
         startActivity(new Intent(requireActivity(), ScannerActivity.class));
     }
 
-    private void onClickPlusButtonDialog() {
-        long num = Long.parseLong(tvItemNumOrderDialog.getText().toString()) + 1;
+    private void onClickButtonTotal() {
+        if (preferences.getListItemInCart(Const.KEY_SHARE_PREFERENCE.KEY_LIST_ITEM_CART) != null) {
+            startActivity(new Intent(requireActivity(), CartActivity.class));
+        } else {
+            showSnackBar(getResources().getString(R.string.please_add_item_in_cart));
+        }
+    }
+
+    private void onClickPlusDialog() {
+        long num = Long.parseLong(tvQuantityDlg.getText().toString()) + 1;
         long totalPrice = num * itemInCart.getPrice();
 
         itemInCart.setQuantity(num);
         itemInCart.setTotal(totalPrice);
 
-        tvItemNumOrderDialog.setText(String.valueOf(num));
-        tvTotalPriceDialog.setText(StringFormatUtils.convertToStringMoneyVND(totalPrice));
+        tvQuantityDlg.setText(String.valueOf(num));
+        tvTotalPriceDlg.setText(StringFormatUtils.convertToStringMoneyVND(totalPrice));
     }
 
-    private void onClickMinusButtonDialog() {
+    private void onClickMinusDialog() {
         long num = 1;
-        long quantityCurrent = Long.parseLong(tvItemNumOrderDialog.getText().toString());
+        long quantityCurrent = Long.parseLong(tvQuantityDlg.getText().toString());
         if (quantityCurrent > 1) {
             num = quantityCurrent - 1;
         }
@@ -215,11 +228,11 @@ public class ItemFragment extends Fragment implements View.OnClickListener, OnSp
         itemInCart.setQuantity(num);
         itemInCart.setTotal(totalPrice);
 
-        tvItemNumOrderDialog.setText(String.valueOf(num));
-        tvTotalPriceDialog.setText(StringFormatUtils.convertToStringMoneyVND(totalPrice));
+        tvQuantityDlg.setText(String.valueOf(num));
+        tvTotalPriceDlg.setText(StringFormatUtils.convertToStringMoneyVND(totalPrice));
     }
 
-    private void onClickAddItemDialog() {
+    private void onClickSubmitDialog() {
         List<ItemInCart> lstItemCart = new ArrayList<>();
         if (preferences.getListItemInCart(Const.KEY_SHARE_PREFERENCE.KEY_LIST_ITEM_CART) != null) {
             lstItemCart.addAll(preferences.getListItemInCart(Const.KEY_SHARE_PREFERENCE.KEY_LIST_ITEM_CART));
@@ -238,23 +251,8 @@ public class ItemFragment extends Fragment implements View.OnClickListener, OnSp
         }
         lstItemCart.add(itemInCart);
         preferences.putListItemInCart(Const.KEY_SHARE_PREFERENCE.KEY_LIST_ITEM_CART, lstItemCart);
-
-        long totalPrice = 0L;
-        if (lstItemCart != null && !lstItemCart.isEmpty()) {
-            for (ItemInCart obj : lstItemCart) {
-                totalPrice += obj.getTotal();
-            }
-        }
-        String text = lstItemCart.size() + " sản phẩm = " + StringFormatUtils.convertToStringMoneyVND(totalPrice);
-        btnTotal.setText(text);
+        calculatorCurrentTotalPrice(lstItemCart);
         ResourceUtils.hiddenAlertDialog(addItemDialog);
-    }
-
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        ResourceUtils.destroyAlertDialog(addItemDialog);
     }
 
     @Override
@@ -270,7 +268,7 @@ public class ItemFragment extends Fragment implements View.OnClickListener, OnSp
             quyCach = 1;
             giaQuyDoi = itemInCart.getItem().getGiaBanLe();
         }
-        long quantity = Long.parseLong(tvItemNumOrderDialog.getText().toString());
+        long quantity = Long.parseLong(tvQuantityDlg.getText().toString());
         long totalPrice = giaQuyDoi * quantity;
 
         itemInCart.setQuantity(quantity);
@@ -279,8 +277,29 @@ public class ItemFragment extends Fragment implements View.OnClickListener, OnSp
         itemInCart.setTotal(totalPrice);
         itemInCart.setHeSoCoSo(quyCach);
 
-        tvPriceItemDialog.setText(StringFormatUtils.convertToStringMoneyVND(giaQuyDoi));
-        tvTotalPriceDialog.setText(StringFormatUtils.convertToStringMoneyVND(totalPrice));
+        tvPriceDlg.setText(StringFormatUtils.convertToStringMoneyVND(giaQuyDoi));
+        tvTotalPriceDlg.setText(StringFormatUtils.convertToStringMoneyVND(totalPrice));
     }
 
+    public static void calculatorCurrentTotalPrice(List<ItemInCart> lstItemCart) {
+        long totalPrice = 0L;
+        if (lstItemCart != null && !lstItemCart.isEmpty()) {
+            for (ItemInCart obj : lstItemCart) {
+                totalPrice += obj.getTotal();
+            }
+        }
+        btnTotal.setText(lstItemCart.size() + " sản phẩm = " + StringFormatUtils.convertToStringMoneyVND(totalPrice));
+    }
+
+    private void showSnackBar(String text) {
+        Snackbar.make(getView(), text, Snackbar.LENGTH_SHORT)
+                .setActionTextColor(getResources().getColor(R.color.button_unable)).show();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        ResourceUtils.destroyAlertDialog(addItemDialog);
+        ResourceUtils.destroyProgressDialog(progressDialog);
+    }
 }

@@ -14,8 +14,8 @@
         android:paddingLeft="@dimen/_8sdp"
         android:paddingRight="@dimen/_8sdp"
         android:text="Set the background selector for the drop-down list rows"
-        android:textColor="@color/colorTextParent"
-        android:textSize="@dimen/_12ssp"
+        android:textColor="@color/colorTextChild"
+        android:textSize="@dimen/_11ssp"
         android:textStyle="bold" />
 
     <TextView
@@ -57,7 +57,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/_26sdp"
+        android:layout_height="@dimen/_28sdp"
         android:layout_marginLeft="@dimen/_8sdp"
         android:layout_marginTop="@dimen/_3sdp"
         android:layout_marginRight="@dimen/_8sdp"
@@ -82,7 +82,7 @@
             android:gravity="end|center_vertical"
             android:paddingEnd="@dimen/_3sdp"
             android:text="Thùng"
-            android:textColor="@color/colorTextChild"
+            android:textColor="@color/colorVinID"
             android:textSize="@dimen/_12ssp"
             android:textStyle="bold" />
     </LinearLayout>
@@ -147,7 +147,7 @@
             android:layout_height="match_parent"
             android:layout_marginEnd="@dimen/_3sdp"
             android:layout_weight="1"
-            android:background="@drawable/shape_bg_bovien_button_xam"
+            android:background="@drawable/shape_button_xam"
             android:fontFamily="@font/roboto_regular"
             android:text="@string/huy_bo"
             android:textColor="@color/white"

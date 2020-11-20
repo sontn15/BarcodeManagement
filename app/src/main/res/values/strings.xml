@@ -7,9 +7,6 @@
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
 
-    <string name="menu_home">Home</string>
-    <string name="menu_gallery">Gallery</string>
-    <string name="menu_slideshow">Slideshow</string>
     <string name="e_mail">Tên tài khoản</string>
     <string name="password">Mật khẩu</string>
     <string name="login">Đăng nhập</string>
@@ -87,8 +84,6 @@
     <string name="don_gia">Đơn giá</string>
     <string name="sl">SL</string>
     <string name="thanh_tien">Thành tiền</string>
-    <string name="them_moi_kh_fail_check_again">Thêm mới khách hàng không thành công, vui lòng kiểm tra lại</string>
-    <string name="them_moi_kh_ok">Thêm mới khách hàng thành công</string>
     <string name="hen_gap_lai">Xin chào quý khách, hẹn gặp lại!</string>
     <string name="please_add_item_in_cart">Vui lòng thêm sản phẩm vào giỏ hàng</string>
     <string name="from_to_date_in_30_day">Tìm kiếm trong khoảng thời gian 30 ngày</string>
@@ -126,21 +121,6 @@
     <string name="tensanpham">Tên sản phẩm</string>
     <string name="tongchi_hai_cham">Tổng chi:</string>
     <string name="tong_thu_hai_cham">Tổng thu:</string>
-    <string name="chieudai">Chiều dài</string>
-    <string name="chieurong">Chiều rộng</string>
-    <string name="soluongvien">Số tấm</string>
-    <string name="soluongvienhaicham">Số tấm:</string>
-    <string name="dientich">Diện tích</string>
-    <string name="dientichmetvuong">Diện tích (m2):</string>
-    <string name="nhap_so_luong_vien">Nhập số tấm</string>
-    <string name="nhap_so_luong_vien_hai_cham">Nhập số tấm:</string>
-    <string name="nhap_chieu_rong">Nhập chiều rộng</string>
-    <string name="nhap_chieu_dai">Nhập chiều dài</string>
-    <string name="trunutmetvuong">Diện tích nứt (m2):</string>
-    <string name="dientichconlai">Diện tích thực tế (m2):</string>
-    <string name="themdientichnut">Thêm diện tích nứt?</string>
-    <string name="nhapchieudainut">Nhập chiều dài nứt</string>
-    <string name="nhapchieurongnut">Nhập chiều rộng nứt</string>
     <string name="chonsanphamkhac">Chọn sản phẩm khác</string>
     <string name="menu_ban_hang">Bán hàng</string>
     <string name="menu_cai_dat">Cài đặt</string>
@@ -156,4 +136,5 @@
     <string name="can_ket_noi_may_in">Bạn cần kết nối máy in</string>
     <string name="da_ketnoi_truoc">Đã kết nối máy in trước đó</string>
     <string name="tong_tien_button">0 sản phẩm = 0đ</string>
+    <string name="xoa">Xóa sản phẩm</string>
 </resources>

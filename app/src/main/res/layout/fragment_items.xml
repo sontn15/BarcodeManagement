@@ -8,7 +8,7 @@
     <RelativeLayout
         android:id="@+id/rlSearchBanHang"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/_40sdp"
+        android:layout_height="@dimen/_38sdp"
         android:layout_alignParentTop="true"
         android:background="@drawable/shape_bg_app"
         android:focusableInTouchMode="true">
@@ -37,7 +37,7 @@
             android:layout_height="match_parent"
             android:layout_alignParentEnd="true"
             android:layout_alignParentBottom="true"
-            android:layout_marginEnd="@dimen/_5sdp"
+            android:layout_marginEnd="@dimen/_6sdp"
             android:layout_marginBottom="@dimen/_3sdp"
             android:src="@drawable/ic_barcode"
             tools:ignore="ContentDescription" />

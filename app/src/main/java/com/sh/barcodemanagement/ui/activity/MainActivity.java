@@ -12,6 +12,8 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.navigation.NavigationView;
 import com.sh.barcodemanagement.R;
+import com.sh.barcodemanagement.database.MySharedPreferences;
+import com.sh.barcodemanagement.utils.Const;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -35,12 +37,14 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
+
+        MySharedPreferences preferences = new MySharedPreferences(MainActivity.this);
+        preferences.clearDataByKey(Const.KEY_SHARE_PREFERENCE.KEY_LIST_ITEM_CART);
     }
 
     @Override
     public boolean onSupportNavigateUp() {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
-        return NavigationUI.navigateUp(navController, mAppBarConfiguration)
-                || super.onSupportNavigateUp();
+        return NavigationUI.navigateUp(navController, mAppBarConfiguration) || super.onSupportNavigateUp();
     }
 }

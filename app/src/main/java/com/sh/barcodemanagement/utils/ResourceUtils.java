@@ -128,7 +128,6 @@ public class ResourceUtils {
     public static void destroyProgressDialog(ProgressDialog progressDialog) {
         if (progressDialog != null) {
             progressDialog.dismiss();
-            progressDialog = null;
         }
     }
 
@@ -147,7 +146,6 @@ public class ResourceUtils {
     public static void destroyAlertDialog(AlertDialog alertDialog) {
         if (alertDialog != null) {
             alertDialog.dismiss();
-            alertDialog = null;
         }
     }
 
@@ -186,7 +184,7 @@ public class ResourceUtils {
             Long id = (long) i;
             Random random = new Random();
             Random random2 = new Random();
-            Long giaBanLe = (long) random2.nextInt(1000000);
+            Long giaBanLe = (long) random2.nextInt(50000);
             int anInt = random.nextInt(listNameItems.size());
             String name = listNameItems.get(anInt);
             String barcode = String.valueOf(i);
@@ -194,6 +192,8 @@ public class ResourceUtils {
             Item item = Item.builder()
                     .id(id).code(code).name(name).status(true).giaBanLe(giaBanLe).barcode(barcode)
                     .unitMin(id).unitMinObj(Unit.builder().id(id).maUnit(id).name("Gói").status(true).storeId(id).build())
+                    .unit1(id + 1).unit1Obj(Unit.builder().id(id + 1).maUnit(id + 1).name("Thùng").status(true).storeId(id).build())
+                    .giaQuyDoi1(10 * giaBanLe).quyCach1(10L)
                     .unitDefault(id).unitDefaultObj(Unit.builder().id(id).maUnit(id).name("Gói").status(true).storeId(id).build())
                     .build();
             data.add(item);

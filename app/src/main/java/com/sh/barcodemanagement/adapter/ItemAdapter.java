@@ -44,7 +44,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull ItemViewHolder holder, int position) {
-        Item item = lstItems.get(position);
+        Item item = lstFiltered.get(position);
 
         holder.tvPriceItem.setText(StringFormatUtils.convertToStringMoneyVND(item.getGiaBanLe()));
         holder.tvItemName.setText(item.getName() != null ? item.getName() : "Tên sản phẩm chưa cập nhật");

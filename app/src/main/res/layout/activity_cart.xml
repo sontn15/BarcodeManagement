@@ -7,7 +7,7 @@
     <TextView
         android:id="@+id/tvDetailBill"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/_30sdp"
+        android:layout_height="@dimen/_36sdp"
         android:background="@color/colorItemClick"
         android:fontFamily="@font/roboto_regular"
         android:gravity="center_vertical"
@@ -21,7 +21,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/llPrice"
-        android:layout_below="@+id/tvDetailBill" />
+        android:layout_below="@+id/tvDetailBill"
+        android:scrollbars="vertical" />
 
     <TextView
         android:id="@+id/tvGachChanCart"

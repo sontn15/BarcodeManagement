@@ -4,8 +4,8 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -23,8 +23,6 @@ public class ItemInCartAdapter extends RecyclerView.Adapter<ItemInCartAdapter.It
         void onPlusClick(ItemInCart item);
 
         void onMinusClick(ItemInCart item);
-
-        void onDeletedClick(ItemInCart item);
 
         void onItemLongClick(ItemInCart item);
     }
@@ -54,7 +52,7 @@ public class ItemInCartAdapter extends RecyclerView.Adapter<ItemInCartAdapter.It
         holder.tvItemNameCart.setText(item.getItem().getName());
         holder.tvUnitCart.setText(item.getUnitChoose() != null ? item.getUnitChoose().getName() : "Không có đơn vị");
         holder.tvQuantityItemCart.setText(String.valueOf(item.getQuantity()));
-        holder.tvOutPriceCart.setText(StringFormatUtils.convertToStringMoneyVND(item.getPrice()));
+        holder.tvOutPriceCart.setText("Giá: " + StringFormatUtils.convertToStringMoneyVND(item.getPrice()));
         holder.tvTotalPriceCart.setText(StringFormatUtils.convertToStringMoneyVND(item.getTotal()));
 
         holder.bind(arrItems.get(position), listener);
@@ -65,22 +63,22 @@ public class ItemInCartAdapter extends RecyclerView.Adapter<ItemInCartAdapter.It
         return arrItems.size();
     }
 
-
     public static class ItemCartViewHolder extends RecyclerView.ViewHolder {
         protected TextView tvItemNameCart, tvTotalPriceCart, tvOutPriceCart, tvQuantityItemCart, tvUnitCart;
-        protected Button btnPlus, btnMinus;
-        private ImageView imvDelete;
+        protected ImageView btnPlus, btnMinus;
+        public RelativeLayout viewBackground, viewForeground;
 
         public ItemCartViewHolder(@NonNull View itemView) {
             super(itemView);
             btnPlus = itemView.findViewById(R.id.btnPlusItemCart);
             btnMinus = itemView.findViewById(R.id.btnMinItemCart);
             tvUnitCart = itemView.findViewById(R.id.tvUnitItemCart);
-            imvDelete = itemView.findViewById(R.id.imvDeleteItemCart);
             tvItemNameCart = itemView.findViewById(R.id.tvNameItemCart);
             tvOutPriceCart = itemView.findViewById(R.id.tvOutPriceItemCart);
             tvQuantityItemCart = itemView.findViewById(R.id.tvQuantityItemCart);
             tvTotalPriceCart = itemView.findViewById(R.id.tvTotalPriceItemCart);
+            viewBackground = itemView.findViewById(R.id.view_background);
+            viewForeground = itemView.findViewById(R.id.view_foreground);
         }
 
         public void bind(final ItemInCart itemInCart, final OnChildItemInCartClickListener listener) {
@@ -110,10 +108,6 @@ public class ItemInCartAdapter extends RecyclerView.Adapter<ItemInCartAdapter.It
 
                 }
                 listener.onMinusClick(itemInCart);
-            });
-
-            imvDelete.setOnClickListener(view -> {
-                listener.onDeletedClick(itemInCart);
             });
 
             itemView.setOnLongClickListener(v -> {
