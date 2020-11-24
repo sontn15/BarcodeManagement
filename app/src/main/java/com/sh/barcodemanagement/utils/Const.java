@@ -1,5 +1,7 @@
 package com.sh.barcodemanagement.utils;
 
+import com.sh.barcodemanagement.model.Unit;
+
 public class Const {
 
     public static final String LOG_TAG = "SONTN7";
@@ -37,42 +39,29 @@ public class Const {
         public static final String HUY_DON_HANG_STR = "Đã hủy đơn hàng";
     }
 
-    public static class PARAMETER {
-        public static final String ID = "id";
-        public static final String BILL_ID = "billId";
-        public static final String COST_MONEY = "costMoney";
-        public static final String CREATE_DATE = "createDate";
-        public static final String BILL_NUMBER = "billNumber";
-        public static final String TOTAL_MONEY = "totalMoney";
-        public static final String DESCRIPTION = "description";
-        public static final String TOTAL_GIA_VON = "totalGiaVon";
-        public static final String INCOME_MONEY = "incomeMoney";
-        public static final String CUSTOMER_NAME = "customerName";
-        public static final String CUSTOMER_CODE = "customerCode";
-        public static final String TYPE_NOTIFICATION = "typeNotification";
+    public static class TABLE_ITEM {
+        public static final String TABLE_NAME = "item";
+        public static final String KEY_ID = "id";
+        public static final String KEY_CODE = "code";
+        public static final String KEY_NAME = "name";
+        public static final String KEY_GIA_BAN_LE = "giaBanLe";
+        public static final String KEY_GIA_BUON = "giaBuon";
+        public static final String KEY_GIA_DAI_LY = "giaDaiLy";
+        public static final String KEY_UNIT_MIN = "unitMin";
+        public static final String KEY_UNIT_DEFAULT = "unitDefault";
+        public static final String KEY_UNIT_1 = "unit1";
+        public static final String KEY_QUY_CACH_1 = "quyCach1";
+        public static final String KEY_GIA_QUY_DOI_1 = "giaQuyDoi1";
+        public static final String KEY_STORE_ID = "storeId";
+        public static final String KEY_BARCODE = "barcode";
     }
 
-    public static class NOTIFICATION {
-        public static final String CHANNEL_NAME = "FCM DMartStone";
-        public static final String CHANNEL_DESC = "Firebase Cloud Messaging DMartStone";
-        public static final String NOTIFICATION_CHANNEL_ID = "com.sh.dmartstonemanagement";
-    }
-
-    public static class UNIT_TYPE_FOR_STORE {
-        public static final Long CENTIMETRE = 1L;
-        public static final Long MILLIMETRE = 2L;
-    }
-
-    public static class LOAI_SANPHAM {
-        public static final Long KICH_THUOC = 1L;
-        public static final Long VAT_TU = 2L;
-        public static final Long DICH_VU = 3L;
-        public static final Long VAN_TAI = 4L;
-    }
-
-    public static class EMPLOYEE_TYPE {
-        public static final Long NHAN_VIEN = 1L;
-        public static final Long QUAN_LY = 2L;
+    public static class TABLE_UNIT {
+        public static final String TABLE_NAME = "unit";
+        public static final String KEY_ID = "id";
+        public static final String KEY_MA_UNIT = "maUnit";
+        public static final String KEY_NAME = "name";
+        public static final String KEY_STORE_ID = "storeId";
     }
 
 }
