@@ -26,11 +26,17 @@ import com.sh.barcodemanagement.R;
 import com.sh.barcodemanagement.adapter.ItemInCartAdapter;
 import com.sh.barcodemanagement.adapter.config.RecyclerItemTouchHelper;
 import com.sh.barcodemanagement.database.MySharedPreferences;
+import com.sh.barcodemanagement.model.Bill;
 import com.sh.barcodemanagement.model.ItemInCart;
 import com.sh.barcodemanagement.model.Store;
+import com.sh.barcodemanagement.model.SubBill;
+import com.sh.barcodemanagement.network.BarcodeApiService;
+import com.sh.barcodemanagement.network.RetrofitClient;
+import com.sh.barcodemanagement.network.request.BillCreateUpdateRequest;
 import com.sh.barcodemanagement.ui.fragment.ItemFragment;
 import com.sh.barcodemanagement.ui.fragment.SettingFragment;
 import com.sh.barcodemanagement.utils.Const;
+import com.sh.barcodemanagement.utils.NetworkUtils;
 import com.sh.barcodemanagement.utils.ResourceUtils;
 import com.sh.barcodemanagement.utils.StringFormatUtils;
 
@@ -39,6 +45,10 @@ import net.posprinter.utils.DataForSendToPrinterPos80;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class CartActivity extends AppCompatActivity implements View.OnClickListener, RecyclerItemTouchHelper.RecyclerItemTouchHelperListener {
     private Button btnOrder;
@@ -58,7 +68,7 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
     private Long totalPrice = 0L;
     private ItemInCart itemInCartEdit;
     private MySharedPreferences preferences;
-
+    private BarcodeApiService barcodeApiService;
     private Receiver netReceiver;
 
     @Override
@@ -73,8 +83,9 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void initData() {
-        preferences = new MySharedPreferences(CartActivity.this);
         lstItemCart = new ArrayList<>();
+        barcodeApiService = RetrofitClient.getClient().create(BarcodeApiService.class);
+        preferences = new MySharedPreferences(CartActivity.this);
         if (preferences.getListItemInCart(Const.KEY_SHARE_PREFERENCE.KEY_LIST_ITEM_CART) != null) {
             lstItemCart.addAll(preferences.getListItemInCart(Const.KEY_SHARE_PREFERENCE.KEY_LIST_ITEM_CART));
         }
@@ -152,7 +163,7 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
         if (lstItemCart.size() > 1) {
             for (int i = 0; i < lstItemCart.size(); i++) {
                 ItemInCart obj = lstItemCart.get(i);
-                if (item.getId().equals(obj.getItem().getId()) && item.getUnitChoose().getMaUnit().equals(obj.getUnitChoose().getMaUnit())) {
+                if (item.getId().equals(obj.getItem().getId()) && item.getUnitChoose().getId().equals(obj.getUnitChoose().getId())) {
                     lstItemCart.set(i, item);
                     preferences.putListItemInCart(Const.KEY_SHARE_PREFERENCE.KEY_LIST_ITEM_CART, lstItemCart);
                     break;
@@ -200,11 +211,39 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void onClickButtonOrder() {
-        if (SettingFragment.CONNECTED) {
-            printBill();
-        } else {
-            showSnackBar(getString(R.string.can_ket_noi_may_in));
+        if (lstItemCart == null || lstItemCart.isEmpty()) {
+            Toast.makeText(CartActivity.this, getResources().getString(R.string.please_add_item_in_cart), Toast.LENGTH_SHORT).show();
+            return;
         }
+        if (NetworkUtils.haveNetwork(CartActivity.this)) {
+            ResourceUtils.showProgressDialog(progressDialog);
+            Call<Bill> billCall = barcodeApiService.createOrUpdateBill(buildBillCreateRequest());
+            billCall.enqueue(new Callback<Bill>() {
+                @Override
+                public void onResponse(Call<Bill> call, Response<Bill> response) {
+                    if (response.isSuccessful() && response.body() != null) {
+                        preferences.clearDataByKey(Const.KEY_SHARE_PREFERENCE.KEY_LIST_ITEM_CART);
+
+                        Bill bill = response.body();
+//                        printBill(bill);
+                        Toast.makeText(CartActivity.this, getResources().getString(R.string.tao_don_hang_thanh_cong), Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(CartActivity.this, getResources().getString(R.string.co_loi_xay_ra), Toast.LENGTH_SHORT).show();
+                    }
+                    ResourceUtils.hiddenProgressDialog(progressDialog);
+                }
+
+                @Override
+                public void onFailure(Call<Bill> call, Throwable t) {
+                    Toast.makeText(CartActivity.this, getResources().getString(R.string.co_loi_xay_ra), Toast.LENGTH_SHORT).show();
+                    ResourceUtils.hiddenProgressDialog(progressDialog);
+                }
+            });
+        } else {
+            Toast.makeText(CartActivity.this, getResources().getString(R.string.check_connection_network), Toast.LENGTH_SHORT).show();
+            ResourceUtils.hiddenProgressDialog(progressDialog);
+        }
+
     }
 
     private void onClickButtonCancelEditDlg() {
@@ -243,28 +282,69 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
             itemInCartAdapter.notifyDataSetChanged();
         }
     }
-    
-    private void printBill() {
-        SettingFragment.binder.writeDataByYouself(
-                new UiExecute() {
-                    @Override
-                    public void onsucess() {
 
-                    }
+    private void printBill(Bill bill) {
+        if (SettingFragment.CONNECTED) {
+            SettingFragment.binder.writeDataByYouself(
+                    new UiExecute() {
+                        @Override
+                        public void onsucess() {
 
-                    @Override
-                    public void onfailed() {
+                        }
 
-                    }
-                }, () -> {
-                    List<byte[]> list = new ArrayList<>();
-                    list.add(DataForSendToPrinterPos80.initializePrinter());
-                    byte[] arrBytes = StringFormatUtils.stringToBytes("Tran Ngoc Son");
-                    list.add(arrBytes);
-                    list.add(DataForSendToPrinterPos80.printAndFeedLine());
-                    list.add(DataForSendToPrinterPos80.selectCutPagerModerAndCutPager(66, 1));
-                    return list;
-                });
+                        @Override
+                        public void onfailed() {
+
+                        }
+                    }, () -> {
+                        List<byte[]> list = new ArrayList<>();
+                        list.add(DataForSendToPrinterPos80.initializePrinter());
+                        byte[] arrBytes = StringFormatUtils.stringToBytes("Tran Ngoc Son");
+                        list.add(arrBytes);
+                        list.add(DataForSendToPrinterPos80.printAndFeedLine());
+                        list.add(DataForSendToPrinterPos80.selectCutPagerModerAndCutPager(66, 1));
+                        return list;
+                    });
+        } else {
+            showSnackBar(getString(R.string.can_ket_noi_may_in));
+        }
+    }
+
+    private BillCreateUpdateRequest buildBillCreateRequest() {
+        Long billId = null;
+        return BillCreateUpdateRequest.builder()
+                .id(billId)
+                .totalMoney(totalPrice)
+                .storeId(store.getId())
+                .lstSubBills(convertListItemInCartToListSubBill(lstItemCart))
+                .build();
+    }
+
+    private List<SubBill> convertListItemInCartToListSubBill(List<ItemInCart> lstItemCart) {
+        List<SubBill> data = new ArrayList<>();
+        if (lstItemCart != null && !lstItemCart.isEmpty()) {
+            for (int i = 0; i < lstItemCart.size(); i++) {
+                ItemInCart obj = lstItemCart.get(i);
+                Long subBillId = null;
+                if (obj.getId() != null) {
+                    subBillId = obj.getSubBillId();
+                }
+                SubBill subBill = SubBill.builder()
+                        .id(subBillId)
+                        .price(obj.getPrice())
+                        .totalMoney(obj.getTotal())
+                        .quantity(obj.getQuantity())
+                        .item(obj.getItem())
+                        .itemName(obj.getItem().getName())
+                        .unit(obj.getUnitChoose())
+                        .unitCoSo(obj.getUnitCoSo())
+                        .heSoCoSo(obj.getHeSoCoSo())
+                        .build();
+
+                data.add(subBill);
+            }
+        }
+        return data;
     }
 
     private static class Receiver extends BroadcastReceiver {

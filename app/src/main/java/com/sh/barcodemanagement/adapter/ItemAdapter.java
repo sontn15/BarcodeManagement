@@ -20,7 +20,7 @@ import java.util.List;
 
 public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder> implements Filterable {
     private final Context mContext;
-    private final List<Item> lstItems;
+    private List<Item> lstItems;
     private List<Item> lstFiltered;
     private final OnItemClickListener onItemClickListener;
 
@@ -32,6 +32,13 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
         this.lstItems = lstItems;
         this.lstFiltered = lstItems;
         this.onItemClickListener = onItemClickListener;
+    }
+
+    public void setData(List<Item> lstItems) {
+        this.lstItems = new ArrayList<>();
+        this.lstItems = lstItems;
+        this.lstFiltered = lstItems;
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -46,10 +53,10 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
     public void onBindViewHolder(@NonNull ItemViewHolder holder, int position) {
         Item item = lstFiltered.get(position);
 
-        holder.tvPriceItem.setText(StringFormatUtils.convertToStringMoneyVND(item.getGiaBanLe()));
-        holder.tvItemName.setText(item.getName() != null ? item.getName() : "Tên sản phẩm chưa cập nhật");
+        holder.tvPriceItem.setText(StringFormatUtils.convertToStringMoneyVND(item.getGiaBan()));
+        holder.tvItemName.setText(item.getName() != null ? item.getName() : "Chưa cập nhật");
         holder.tvDonVi.setText((item.getUnitDefaultObj() != null && item.getUnitDefaultObj().getName() != null) ?
-                (item.getUnitDefaultObj().getName()) : "Không có đơn vị mặc định");
+                (item.getUnitDefaultObj().getName()) : "Không có đơn vị");
 
         holder.itemView.setOnClickListener(view -> onItemClickListener.onClickItem(position));
     }

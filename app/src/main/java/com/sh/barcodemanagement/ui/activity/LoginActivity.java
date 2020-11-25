@@ -85,18 +85,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     @Override
     public void onClick(View view) {
-//        String username = edtUsername.getText().toString();
-//        String password = edtPassword.getText().toString();
-//        if (username.isEmpty() || password.isEmpty()) {
-//        showSnackBar(getResources().getString(R.string.vui_long_nhap_day_du_thong_tin));
-//            return;
-//        }
-//        checkUserLogin(username, password);
-
-        startActivity(new Intent(LoginActivity.this, MainActivity.class));
-        finish();
-
-
+        String username = edtUsername.getText().toString();
+        String password = edtPassword.getText().toString();
+        if (username.isEmpty() || password.isEmpty()) {
+            showSnackBar(getResources().getString(R.string.vui_long_nhap_day_du_thong_tin));
+            return;
+        }
+        checkUserLogin(username, password);
         InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(getWindow().getDecorView().getRootView().getWindowToken(), 0);
     }
@@ -104,13 +99,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private void checkUserLogin(String username, String password) {
         if (NetworkUtils.haveNetwork(LoginActivity.this)) {
             ResourceUtils.showProgressDialog(progressDialog);
-            Call<Store> callLogin = barcodeApiService.login(username.trim(), password, phoneInformation);
+            Call<Store> callLogin = barcodeApiService.login(username.trim(), password.trim(), phoneInformation);
             callLogin.enqueue(new Callback<Store>() {
                 @Override
                 public void onResponse(Call<Store> call, Response<Store> response) {
                     if (response.isSuccessful() && response.body() != null) {
                         Store storeLogin = response.body();
-                        preferences.putStore(Const.KEY_SHARE_PREFERENCE.KEY_MY_EMPLOYEE, storeLogin);
+                        preferences.putStore(Const.KEY_SHARE_PREFERENCE.KEY_STORE, storeLogin);
                         startActivity(new Intent(LoginActivity.this, MainActivity.class));
                         finish();
                     } else {

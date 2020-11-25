@@ -24,7 +24,6 @@ public class SQLiteDatabaseHandler extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         String CREATE_COUNTRY_TABLE = "CREATE TABLE " + Const.TABLE_UNIT.TABLE_NAME + "("
                 + Const.TABLE_UNIT.KEY_ID + " LONG PRIMARY KEY,"
-                + Const.TABLE_UNIT.KEY_MA_UNIT + " LONG,"
                 + Const.TABLE_UNIT.KEY_NAME + " TEXT,"
                 + Const.TABLE_UNIT.KEY_STORE_ID + " LONG" + ")";
         db.execSQL(CREATE_COUNTRY_TABLE);
@@ -46,9 +45,8 @@ public class SQLiteDatabaseHandler extends SQLiteOpenHelper {
             do {
                 data.add(Unit.builder()
                         .id(cursor.getLong(0))
-                        .maUnit(cursor.getLong(1))
-                        .name(cursor.getString(2))
-                        .storeId(cursor.getLong(3))
+                        .name(cursor.getString(1))
+                        .storeId(cursor.getLong(2))
                         .build());
             } while (cursor.moveToNext());
         }
@@ -61,7 +59,6 @@ public class SQLiteDatabaseHandler extends SQLiteOpenHelper {
             ContentValues values = new ContentValues();
             values.put(Const.TABLE_UNIT.KEY_ID, unit.getId());
             values.put(Const.TABLE_UNIT.KEY_NAME, unit.getName());
-            values.put(Const.TABLE_UNIT.KEY_MA_UNIT, unit.getMaUnit());
             values.put(Const.TABLE_UNIT.KEY_STORE_ID, unit.getStoreId());
 
             db.insert(Const.TABLE_UNIT.TABLE_NAME, null, values);
@@ -72,7 +69,7 @@ public class SQLiteDatabaseHandler extends SQLiteOpenHelper {
     public Unit getUnitById(int id) {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.query(Const.TABLE_UNIT.TABLE_NAME,
-                new String[]{Const.TABLE_UNIT.KEY_ID, Const.TABLE_UNIT.KEY_NAME, Const.TABLE_UNIT.KEY_MA_UNIT, Const.TABLE_UNIT.KEY_STORE_ID},
+                new String[]{Const.TABLE_UNIT.KEY_ID, Const.TABLE_UNIT.KEY_NAME, Const.TABLE_UNIT.KEY_STORE_ID},
                 Const.TABLE_UNIT.KEY_ID + "=?",
                 new String[]{String.valueOf(id)}, null, null, null, null);
         if (cursor != null)
@@ -80,9 +77,8 @@ public class SQLiteDatabaseHandler extends SQLiteOpenHelper {
 
         return Unit.builder()
                 .id(cursor.getLong(0))
-                .maUnit(cursor.getLong(1))
-                .name(cursor.getString(2))
-                .storeId(cursor.getLong(3))
+                .name(cursor.getString(1))
+                .storeId(cursor.getLong(2))
                 .build();
     }
 

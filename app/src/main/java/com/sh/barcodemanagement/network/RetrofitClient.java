@@ -10,7 +10,7 @@ public class RetrofitClient {
     public static Retrofit getClient() {
         if (retrofit == null) {
             retrofit = new Retrofit.Builder()
-                    .baseUrl("http://202.92.4.184:8585/D-MartStone-Api/api/v1/")
+                    .baseUrl("http://202.92.4.184:8585/Barcode-Api/api/v1/")
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
         }

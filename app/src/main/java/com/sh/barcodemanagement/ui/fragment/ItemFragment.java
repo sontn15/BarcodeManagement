@@ -27,7 +27,10 @@ import com.sh.barcodemanagement.adapter.ItemAdapter;
 import com.sh.barcodemanagement.database.MySharedPreferences;
 import com.sh.barcodemanagement.model.Item;
 import com.sh.barcodemanagement.model.ItemInCart;
+import com.sh.barcodemanagement.model.Store;
 import com.sh.barcodemanagement.model.Unit;
+import com.sh.barcodemanagement.network.BarcodeApiService;
+import com.sh.barcodemanagement.network.RetrofitClient;
 import com.sh.barcodemanagement.ui.activity.CartActivity;
 import com.sh.barcodemanagement.ui.activity.ScannerActivity;
 import com.sh.barcodemanagement.utils.Const;
@@ -39,6 +42,10 @@ import org.angmarch.views.OnSpinnerItemSelectedListener;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class ItemFragment extends Fragment implements View.OnClickListener, OnSpinnerItemSelectedListener {
     private View mView;
@@ -54,33 +61,34 @@ public class ItemFragment extends Fragment implements View.OnClickListener, OnSp
     private Button btnMinusDlg, btnPlusDlg, btnSubmitAddDlg;
     private TextView tvNameDlg, tvTotalPriceDlg, tvPriceDlg, tvQuantityDlg;
 
+    private Store storeLogin;
     private ItemInCart itemInCart;
     private List<Item> listItems;
     private ItemAdapter itemAdapter;
     private MySharedPreferences preferences;
+    private BarcodeApiService barcodeApiService;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.fragment_items, container, false);
         initView();
-        ResourceUtils.showProgressDialog(progressDialog);
         initData();
         initAdapter();
         initDialogAddItem();
-        ResourceUtils.hiddenProgressDialog(progressDialog);
         return mView;
     }
 
     private void initData() {
-        listItems = new ArrayList<>();
-        listItems.addAll(ResourceUtils.buildListItems());
-
         preferences = new MySharedPreferences(requireContext());
+        storeLogin = preferences.getStore(Const.KEY_SHARE_PREFERENCE.KEY_STORE);
         if (preferences.getListItemInCart(Const.KEY_SHARE_PREFERENCE.KEY_LIST_ITEM_CART) != null) {
             List<ItemInCart> lstItemCart = preferences.getListItemInCart(Const.KEY_SHARE_PREFERENCE.KEY_LIST_ITEM_CART);
             calculatorCurrentTotalPrice(lstItemCart);
         }
+
+        listItems = new ArrayList<>();
+        barcodeApiService = RetrofitClient.getClient().create(BarcodeApiService.class);
     }
 
     private void initAdapter() {
@@ -88,9 +96,10 @@ public class ItemFragment extends Fragment implements View.OnClickListener, OnSp
             //Set data for dialog
             Item itemClick = listItems.get(position);
             itemInCart = ItemInCart.builder().id(itemClick.getId()).quantity(1L).item(itemClick)
+                    .price(itemClick.getGiaBan())
                     .unitChoose(itemClick.getUnitDefaultObj() != null ? itemClick.getUnitDefaultObj() : new Unit())
                     .unitCoSo(itemClick.getUnitMin()).heSoCoSo(1L).heSoCoSo(ResourceUtils.buildHeSoCoSoForItemInCart(itemClick)).build();
-            Long price = ResourceUtils.getPriceDefaultOfItemForCustomer(itemInCart.getItem());
+            Long price = itemInCart.getPrice();
             itemInCart.setPrice(price);
             itemInCart.setTotal(price);
 
@@ -106,6 +115,28 @@ public class ItemFragment extends Fragment implements View.OnClickListener, OnSp
             ResourceUtils.showAlertDialog(addItemDialog);
         });
         rcvItem.setAdapter(itemAdapter);
+
+        ResourceUtils.showProgressDialog(progressDialog);
+        Call<List<Item>> call = barcodeApiService.getAllItems(storeLogin.getId());
+        call.enqueue(new Callback<List<Item>>() {
+            @Override
+            public void onResponse(Call<List<Item>> call, Response<List<Item>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    List<Item> data = response.body();
+                    listItems.addAll(data);
+                    itemAdapter.notifyDataSetChanged();
+                } else {
+                    showSnackBar(getResources().getString(R.string.co_loi_xay_ra));
+                }
+                ResourceUtils.hiddenProgressDialog(progressDialog);
+            }
+
+            @Override
+            public void onFailure(Call<List<Item>> call, Throwable t) {
+                showSnackBar(getResources().getString(R.string.co_loi_xay_ra));
+                ResourceUtils.hiddenProgressDialog(progressDialog);
+            }
+        });
     }
 
     private void initView() {
@@ -241,7 +272,7 @@ public class ItemFragment extends Fragment implements View.OnClickListener, OnSp
             ItemInCart itemRemove = null;
             for (ItemInCart obj : lstItemCart) {
                 if (itemInCart.getId().equals(obj.getItem().getId())
-                        && itemInCart.getUnitChoose().getMaUnit().equals(obj.getUnitChoose().getMaUnit())) {
+                        && itemInCart.getUnitChoose().getId().equals(obj.getUnitChoose().getId())) {
                     itemRemove = obj;
                 }
             }
@@ -260,13 +291,13 @@ public class ItemFragment extends Fragment implements View.OnClickListener, OnSp
         Unit unitChoose = (Unit) parent.getItemAtPosition(position);
         long quyCach = 1;
         long giaQuyDoi = 0;
-        if (itemInCart.getItem().getUnit1Obj() != null && itemInCart.getItem().getUnit1Obj().getMaUnit().equals(unitChoose.getMaUnit())) {
+        if (itemInCart.getItem().getUnit1Obj() != null && itemInCart.getItem().getUnit1Obj().getId().equals(unitChoose.getId())) {
             quyCach = itemInCart.getItem().getQuyCach1();
             giaQuyDoi = itemInCart.getItem().getGiaQuyDoi1();
         }
-        if (itemInCart.getItem().getUnitMinObj() != null && itemInCart.getItem().getUnitMinObj().getMaUnit().equals(unitChoose.getMaUnit())) {
+        if (itemInCart.getItem().getUnitMinObj() != null && itemInCart.getItem().getUnitMinObj().getId().equals(unitChoose.getId())) {
             quyCach = 1;
-            giaQuyDoi = itemInCart.getItem().getGiaBanLe();
+            giaQuyDoi = itemInCart.getItem().getGiaBan();
         }
         long quantity = Long.parseLong(tvQuantityDlg.getText().toString());
         long totalPrice = giaQuyDoi * quantity;
@@ -292,7 +323,7 @@ public class ItemFragment extends Fragment implements View.OnClickListener, OnSp
     }
 
     private void showSnackBar(String text) {
-        Snackbar.make(getView(), text, Snackbar.LENGTH_SHORT)
+        Snackbar.make(requireView(), text, Snackbar.LENGTH_SHORT)
                 .setActionTextColor(getResources().getColor(R.color.button_unable)).show();
     }
 

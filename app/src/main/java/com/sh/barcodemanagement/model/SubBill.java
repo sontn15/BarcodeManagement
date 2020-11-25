@@ -18,17 +18,11 @@ public class SubBill implements Parcelable {
     private Item item;
     private String itemName;
     private Unit unit;
-    private Double quantity = 0D;
+    private Long quantity = 0L;
     private Long price = 0L;
     private Long totalMoney = 0L;
-    private Long d1Nut = 0L;
-    private Long d2Nut = 0L;
-    private Double dienTichNut = 0D;
-    private Long chieuDai = 0L;
-    private Long chieuRong = 0L;
-    private Long itemType;
-    private Long soLuongVien = 0L;
-
+    private Long unitCoSo;
+    private Long heSoCoSo;
 
     protected SubBill(Parcel in) {
         if (in.readByte() == 0) {
@@ -42,7 +36,7 @@ public class SubBill implements Parcelable {
         if (in.readByte() == 0) {
             quantity = null;
         } else {
-            quantity = in.readDouble();
+            quantity = in.readLong();
         }
         if (in.readByte() == 0) {
             price = null;
@@ -55,39 +49,14 @@ public class SubBill implements Parcelable {
             totalMoney = in.readLong();
         }
         if (in.readByte() == 0) {
-            d1Nut = null;
+            unitCoSo = null;
         } else {
-            d1Nut = in.readLong();
+            unitCoSo = in.readLong();
         }
         if (in.readByte() == 0) {
-            d2Nut = null;
+            heSoCoSo = null;
         } else {
-            d2Nut = in.readLong();
-        }
-        if (in.readByte() == 0) {
-            dienTichNut = null;
-        } else {
-            dienTichNut = in.readDouble();
-        }
-        if (in.readByte() == 0) {
-            chieuDai = null;
-        } else {
-            chieuDai = in.readLong();
-        }
-        if (in.readByte() == 0) {
-            chieuRong = null;
-        } else {
-            chieuRong = in.readLong();
-        }
-        if (in.readByte() == 0) {
-            itemType = null;
-        } else {
-            itemType = in.readLong();
-        }
-        if (in.readByte() == 0) {
-            soLuongVien = null;
-        } else {
-            soLuongVien = in.readLong();
+            heSoCoSo = in.readLong();
         }
     }
 
@@ -123,7 +92,7 @@ public class SubBill implements Parcelable {
             dest.writeByte((byte) 0);
         } else {
             dest.writeByte((byte) 1);
-            dest.writeDouble(quantity);
+            dest.writeLong(quantity);
         }
         if (price == null) {
             dest.writeByte((byte) 0);
@@ -137,47 +106,17 @@ public class SubBill implements Parcelable {
             dest.writeByte((byte) 1);
             dest.writeLong(totalMoney);
         }
-        if (d1Nut == null) {
+        if (unitCoSo == null) {
             dest.writeByte((byte) 0);
         } else {
             dest.writeByte((byte) 1);
-            dest.writeLong(d1Nut);
+            dest.writeLong(unitCoSo);
         }
-        if (d2Nut == null) {
+        if (heSoCoSo == null) {
             dest.writeByte((byte) 0);
         } else {
             dest.writeByte((byte) 1);
-            dest.writeLong(d2Nut);
-        }
-        if (dienTichNut == null) {
-            dest.writeByte((byte) 0);
-        } else {
-            dest.writeByte((byte) 1);
-            dest.writeDouble(dienTichNut);
-        }
-        if (chieuDai == null) {
-            dest.writeByte((byte) 0);
-        } else {
-            dest.writeByte((byte) 1);
-            dest.writeLong(chieuDai);
-        }
-        if (chieuRong == null) {
-            dest.writeByte((byte) 0);
-        } else {
-            dest.writeByte((byte) 1);
-            dest.writeLong(chieuRong);
-        }
-        if (itemType == null) {
-            dest.writeByte((byte) 0);
-        } else {
-            dest.writeByte((byte) 1);
-            dest.writeLong(itemType);
-        }
-        if (soLuongVien == null) {
-            dest.writeByte((byte) 0);
-        } else {
-            dest.writeByte((byte) 1);
-            dest.writeLong(soLuongVien);
+            dest.writeLong(heSoCoSo);
         }
     }
 }

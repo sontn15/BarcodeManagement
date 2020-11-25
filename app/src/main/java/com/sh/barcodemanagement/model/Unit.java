@@ -15,7 +15,6 @@ import lombok.NoArgsConstructor;
 public class Unit implements Parcelable {
 
     private Long id;
-    private Long maUnit;
     private String name;
     private String note;
     private boolean status;
@@ -27,11 +26,6 @@ public class Unit implements Parcelable {
             id = null;
         } else {
             id = in.readLong();
-        }
-        if (in.readByte() == 0) {
-            maUnit = null;
-        } else {
-            maUnit = in.readLong();
         }
         name = in.readString();
         note = in.readString();
@@ -61,27 +55,21 @@ public class Unit implements Parcelable {
     }
 
     @Override
-    public void writeToParcel(Parcel parcel, int i) {
+    public void writeToParcel(Parcel dest, int flags) {
         if (id == null) {
-            parcel.writeByte((byte) 0);
+            dest.writeByte((byte) 0);
         } else {
-            parcel.writeByte((byte) 1);
-            parcel.writeLong(id);
+            dest.writeByte((byte) 1);
+            dest.writeLong(id);
         }
-        if (maUnit == null) {
-            parcel.writeByte((byte) 0);
-        } else {
-            parcel.writeByte((byte) 1);
-            parcel.writeLong(maUnit);
-        }
-        parcel.writeString(name);
-        parcel.writeString(note);
-        parcel.writeByte((byte) (status ? 1 : 0));
+        dest.writeString(name);
+        dest.writeString(note);
+        dest.writeByte((byte) (status ? 1 : 0));
         if (storeId == null) {
-            parcel.writeByte((byte) 0);
+            dest.writeByte((byte) 0);
         } else {
-            parcel.writeByte((byte) 1);
-            parcel.writeLong(storeId);
+            dest.writeByte((byte) 1);
+            dest.writeLong(storeId);
         }
     }
 

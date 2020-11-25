@@ -59,7 +59,6 @@ public class Const {
     public static class TABLE_UNIT {
         public static final String TABLE_NAME = "unit";
         public static final String KEY_ID = "id";
-        public static final String KEY_MA_UNIT = "maUnit";
         public static final String KEY_NAME = "name";
         public static final String KEY_STORE_ID = "storeId";
     }
