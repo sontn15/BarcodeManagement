@@ -52,5 +52,7 @@ dependencies {
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
     implementation 'me.dm7.barcodescanner:zxing:1.9'
     implementation 'com.github.arcadefire:nice-spinner:1.4.4'
+    implementation "androidx.room:room-runtime:2.2.5"
+    annotationProcessor "androidx.room:room-compiler:2.2.5"
     compile files('libs/posprinterconnectandsendsdk.jar')
 }

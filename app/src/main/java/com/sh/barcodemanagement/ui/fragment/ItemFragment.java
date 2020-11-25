@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -24,7 +25,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.snackbar.Snackbar;
 import com.sh.barcodemanagement.R;
 import com.sh.barcodemanagement.adapter.ItemAdapter;
+import com.sh.barcodemanagement.database.BarcodeDatabase;
 import com.sh.barcodemanagement.database.MySharedPreferences;
+import com.sh.barcodemanagement.database.entity.UnitEntity;
 import com.sh.barcodemanagement.model.Item;
 import com.sh.barcodemanagement.model.ItemInCart;
 import com.sh.barcodemanagement.model.Store;
@@ -89,6 +92,9 @@ public class ItemFragment extends Fragment implements View.OnClickListener, OnSp
 
         listItems = new ArrayList<>();
         barcodeApiService = RetrofitClient.getClient().create(BarcodeApiService.class);
+
+        List<UnitEntity> allUnits = BarcodeDatabase.getInstance(requireActivity()).barcodeDAO().findAllUnits();
+        Toast.makeText(requireActivity(), "Size: " + allUnits.size(), Toast.LENGTH_SHORT).show();
     }
 
     private void initAdapter() {

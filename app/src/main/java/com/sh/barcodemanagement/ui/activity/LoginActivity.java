@@ -11,17 +11,28 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.sh.barcodemanagement.R;
+import com.sh.barcodemanagement.database.BarcodeDatabase;
 import com.sh.barcodemanagement.database.MySharedPreferences;
+import com.sh.barcodemanagement.database.entity.BarcodeEntity;
+import com.sh.barcodemanagement.database.entity.ItemEntity;
+import com.sh.barcodemanagement.database.entity.UnitEntity;
+import com.sh.barcodemanagement.model.Barcode;
+import com.sh.barcodemanagement.model.Item;
 import com.sh.barcodemanagement.model.Store;
+import com.sh.barcodemanagement.model.Unit;
 import com.sh.barcodemanagement.network.BarcodeApiService;
 import com.sh.barcodemanagement.network.RetrofitClient;
 import com.sh.barcodemanagement.utils.Const;
 import com.sh.barcodemanagement.utils.NetworkUtils;
 import com.sh.barcodemanagement.utils.ResourceUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -106,8 +117,88 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     if (response.isSuccessful() && response.body() != null) {
                         Store storeLogin = response.body();
                         preferences.putStore(Const.KEY_SHARE_PREFERENCE.KEY_STORE, storeLogin);
-                        startActivity(new Intent(LoginActivity.this, MainActivity.class));
-                        finish();
+
+                        Call<List<Unit>> callUnits = barcodeApiService.findAllUnits(storeLogin.getId());
+                        callUnits.enqueue(new Callback<List<Unit>>() {
+                            @RequiresApi(api = Build.VERSION_CODES.N)
+                            @Override
+                            public void onResponse(Call<List<Unit>> call, Response<List<Unit>> response) {
+                                if (response.isSuccessful() && response.body() != null) {
+                                    List<UnitEntity> entityList = new ArrayList<>();
+                                    List<Unit> listUnits = response.body();
+                                    listUnits.forEach(unit -> entityList.add(UnitEntity.builder()
+                                            .id(unit.getId())
+                                            .name(unit.getName())
+                                            .note(unit.getNote())
+                                            .storeId(unit.getStoreId())
+                                            .build()));
+                                    BarcodeDatabase.getInstance(LoginActivity.this).barcodeDAO().insertListUnits(entityList);
+
+                                    Call<List<Barcode>> callBarCodes = barcodeApiService.findAllBarCodes(storeLogin.getId());
+                                    callBarCodes.enqueue(new Callback<List<Barcode>>() {
+                                        @Override
+                                        public void onResponse(Call<List<Barcode>> call, Response<List<Barcode>> response) {
+                                            if (response.isSuccessful() && response.body() != null) {
+                                                List<BarcodeEntity> barcodeEntities = new ArrayList<>();
+                                                List<Barcode> listBarCodes = response.body();
+                                                listBarCodes.forEach(barcode -> barcodeEntities.add(BarcodeEntity.builder()
+                                                        .id(barcode.getId())
+                                                        .itemCode(barcode.getItemCode())
+                                                        .barcode(barcode.getBarcode())
+                                                        .storeId(barcode.getStoreId())
+                                                        .build()));
+                                                BarcodeDatabase.getInstance(LoginActivity.this).barcodeDAO().insertListBarCodes(barcodeEntities);
+
+
+                                                Call<List<Item>> callItems = barcodeApiService.getAllItems(storeLogin.getId());
+                                                callItems.enqueue(new Callback<List<Item>>() {
+                                                    @Override
+                                                    public void onResponse(Call<List<Item>> call, Response<List<Item>> response) {
+                                                        if (response.isSuccessful() && response.body() != null) {
+                                                            List<ItemEntity> itemEntities = new ArrayList<>();
+                                                            List<Item> listItemServer = response.body();
+                                                            listItemServer.forEach(item -> itemEntities.add(ItemEntity.builder()
+                                                                    .id(item.getId())
+                                                                    .code(item.getCode())
+                                                                    .name(item.getName())
+                                                                    .giaBan(item.getGiaBan())
+                                                                    .barcode(item.getBarcode())
+                                                                    .unitMin(item.getUnitMin())
+                                                                    .unitDefault(item.getUnitDefault())
+                                                                    .unit1(item.getUnit1())
+                                                                    .quyCach1(item.getQuyCach1())
+                                                                    .giaQuyDoi1(item.getGiaQuyDoi1())
+                                                                    .unit2(item.getUnit2())
+                                                                    .quyCach2(item.getQuyCach2())
+                                                                    .giaQuyDoi2(item.getGiaQuyDoi2())
+                                                                    .build()));
+                                                            BarcodeDatabase.getInstance(LoginActivity.this).barcodeDAO().insertListItems(itemEntities);
+
+                                                            startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                                                            finish();
+                                                        }
+                                                    }
+
+                                                    @Override
+                                                    public void onFailure(Call<List<Item>> call, Throwable t) {
+                                                    }
+                                                });
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onFailure(Call<List<Barcode>> call, Throwable t) {
+
+                                        }
+                                    });
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Call<List<Unit>> call, Throwable t) {
+
+                            }
+                        });
                     } else {
                         showSnackBar(getResources().getString(R.string.taikhoan_matkhau_khong_dung));
                     }
