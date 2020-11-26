@@ -32,7 +32,7 @@ import com.sh.barcodemanagement.model.Store;
 import com.sh.barcodemanagement.model.SubBill;
 import com.sh.barcodemanagement.network.BarcodeApiService;
 import com.sh.barcodemanagement.network.RetrofitClient;
-import com.sh.barcodemanagement.network.request.BillCreateUpdateRequest;
+import com.sh.barcodemanagement.network.request.BillRequest;
 import com.sh.barcodemanagement.ui.fragment.ItemFragment;
 import com.sh.barcodemanagement.ui.fragment.SettingFragment;
 import com.sh.barcodemanagement.utils.Const;
@@ -222,11 +222,12 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
                 @Override
                 public void onResponse(Call<Bill> call, Response<Bill> response) {
                     if (response.isSuccessful() && response.body() != null) {
-                        preferences.clearDataByKey(Const.KEY_SHARE_PREFERENCE.KEY_LIST_ITEM_CART);
-
                         Bill bill = response.body();
 //                        printBill(bill);
+                        preferences.clearDataByKey(Const.KEY_SHARE_PREFERENCE.KEY_LIST_ITEM_CART);
                         Toast.makeText(CartActivity.this, getResources().getString(R.string.tao_don_hang_thanh_cong), Toast.LENGTH_SHORT).show();
+                        startActivity(new Intent(CartActivity.this, MainActivity.class));
+                        finish();
                     } else {
                         Toast.makeText(CartActivity.this, getResources().getString(R.string.co_loi_xay_ra), Toast.LENGTH_SHORT).show();
                     }
@@ -310,12 +311,12 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private BillCreateUpdateRequest buildBillCreateRequest() {
+    private BillRequest buildBillCreateRequest() {
         Long billId = null;
-        return BillCreateUpdateRequest.builder()
+        return BillRequest.builder()
                 .id(billId)
-                .totalMoney(totalPrice)
                 .storeId(store.getId())
+                .totalMoney(totalPrice)
                 .lstSubBills(convertListItemInCartToListSubBill(lstItemCart))
                 .build();
     }

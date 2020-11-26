@@ -137,4 +137,5 @@
     <string name="da_ketnoi_truoc">Đã kết nối máy in trước đó</string>
     <string name="tong_tien_button">0 sản phẩm = 0đ</string>
     <string name="xoa">Xóa sản phẩm</string>
+    <string name="khong_tim_thay_sp">Không tìm thấy sản phẩm trên</string>
 </resources>

@@ -2,9 +2,11 @@ package com.sh.barcodemanagement.ui.fragment;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,10 +14,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
@@ -27,9 +29,11 @@ import com.sh.barcodemanagement.R;
 import com.sh.barcodemanagement.adapter.ItemAdapter;
 import com.sh.barcodemanagement.database.BarcodeDatabase;
 import com.sh.barcodemanagement.database.MySharedPreferences;
+import com.sh.barcodemanagement.database.entity.ItemEntity;
 import com.sh.barcodemanagement.database.entity.UnitEntity;
 import com.sh.barcodemanagement.model.Item;
 import com.sh.barcodemanagement.model.ItemInCart;
+import com.sh.barcodemanagement.model.Result;
 import com.sh.barcodemanagement.model.Store;
 import com.sh.barcodemanagement.model.Unit;
 import com.sh.barcodemanagement.network.BarcodeApiService;
@@ -37,6 +41,7 @@ import com.sh.barcodemanagement.network.RetrofitClient;
 import com.sh.barcodemanagement.ui.activity.CartActivity;
 import com.sh.barcodemanagement.ui.activity.ScannerActivity;
 import com.sh.barcodemanagement.utils.Const;
+import com.sh.barcodemanagement.utils.NetworkUtils;
 import com.sh.barcodemanagement.utils.ResourceUtils;
 import com.sh.barcodemanagement.utils.StringFormatUtils;
 
@@ -45,6 +50,8 @@ import org.angmarch.views.OnSpinnerItemSelectedListener;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -59,18 +66,22 @@ public class ItemFragment extends Fragment implements View.OnClickListener, OnSp
     private ProgressDialog progressDialog;
 
     private View dialog;
+    private Button btnSubmitAddDlg;
     private NiceSpinner unitSpinner;
     private AlertDialog addItemDialog;
-    private Button btnMinusDlg, btnPlusDlg, btnSubmitAddDlg;
+    private ImageView btnPlusDlg, btnMinusDlg;
     private TextView tvNameDlg, tvTotalPriceDlg, tvPriceDlg, tvQuantityDlg;
 
     private Store storeLogin;
     private ItemInCart itemInCart;
     private List<Item> listItems;
     private ItemAdapter itemAdapter;
+    private Map<Long, UnitEntity> unitEntityMap;
+
     private MySharedPreferences preferences;
     private BarcodeApiService barcodeApiService;
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -82,6 +93,7 @@ public class ItemFragment extends Fragment implements View.OnClickListener, OnSp
         return mView;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     private void initData() {
         preferences = new MySharedPreferences(requireContext());
         storeLogin = preferences.getStore(Const.KEY_SHARE_PREFERENCE.KEY_STORE);
@@ -89,60 +101,54 @@ public class ItemFragment extends Fragment implements View.OnClickListener, OnSp
             List<ItemInCart> lstItemCart = preferences.getListItemInCart(Const.KEY_SHARE_PREFERENCE.KEY_LIST_ITEM_CART);
             calculatorCurrentTotalPrice(lstItemCart);
         }
-
         listItems = new ArrayList<>();
         barcodeApiService = RetrofitClient.getClient().create(BarcodeApiService.class);
-
-        List<UnitEntity> allUnits = BarcodeDatabase.getInstance(requireActivity()).barcodeDAO().findAllUnits();
-        Toast.makeText(requireActivity(), "Size: " + allUnits.size(), Toast.LENGTH_SHORT).show();
+        unitEntityMap = BarcodeDatabase.getInstance(requireActivity()).barcodeDAO().findAllUnits()
+                .stream().collect(Collectors.toMap(UnitEntity::getId, obj -> obj));
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     private void initAdapter() {
-        itemAdapter = new ItemAdapter(requireContext(), listItems, position -> {
-            //Set data for dialog
-            Item itemClick = listItems.get(position);
-            itemInCart = ItemInCart.builder().id(itemClick.getId()).quantity(1L).item(itemClick)
-                    .price(itemClick.getGiaBan())
-                    .unitChoose(itemClick.getUnitDefaultObj() != null ? itemClick.getUnitDefaultObj() : new Unit())
-                    .unitCoSo(itemClick.getUnitMin()).heSoCoSo(1L).heSoCoSo(ResourceUtils.buildHeSoCoSoForItemInCart(itemClick)).build();
-            Long price = itemInCart.getPrice();
-            itemInCart.setPrice(price);
-            itemInCart.setTotal(price);
-
-            tvQuantityDlg.setText(String.valueOf(1L));
-            tvPriceDlg.setText(StringFormatUtils.convertToStringMoneyVND(itemInCart.getPrice()));
-            tvTotalPriceDlg.setText(StringFormatUtils.convertToStringMoneyVND(itemInCart.getTotal()));
-            tvNameDlg.setText(itemInCart.getItem().getName() != null ? itemInCart.getItem().getName() : "");
-
-            List<Unit> lstUnits = new ArrayList<>(ResourceUtils.buildListUnitInItem(itemInCart));
-            unitSpinner.attachDataSource(lstUnits);
-            unitSpinner.setSelectedIndex(0);
-
+        itemAdapter = new ItemAdapter(requireContext(), listItems, item -> {
+            buildDialog(item);
             ResourceUtils.showAlertDialog(addItemDialog);
         });
         rcvItem.setAdapter(itemAdapter);
 
         ResourceUtils.showProgressDialog(progressDialog);
-        Call<List<Item>> call = barcodeApiService.getAllItems(storeLogin.getId());
-        call.enqueue(new Callback<List<Item>>() {
-            @Override
-            public void onResponse(Call<List<Item>> call, Response<List<Item>> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    List<Item> data = response.body();
-                    listItems.addAll(data);
-                    itemAdapter.notifyDataSetChanged();
-                } else {
-                    showSnackBar(getResources().getString(R.string.co_loi_xay_ra));
+        if (NetworkUtils.haveNetwork(requireActivity())) {
+            Call<Result> callChange = barcodeApiService.checkDataIsChange(storeLogin.getId());
+            callChange.enqueue(new Callback<Result>() {
+                @RequiresApi(api = Build.VERSION_CODES.N)
+                @Override
+                public void onResponse(Call<Result> call, Response<Result> response) {
+                    if (response.isSuccessful() && response.body() != null) {
+                        Result result = response.body();
+                        if (result.getResult().equalsIgnoreCase("true")) {
+                            Log.d(Const.LOG_TAG, "Have new data, sync data start...");
+                            ResourceUtils.syncDataFromServer(
+                                    requireActivity(), progressDialog, barcodeApiService, storeLogin, listItems, itemAdapter, null);
+                        } else {
+                            listItems.clear();
+                            listItems.addAll(ResourceUtils.getAllItemFromRoomDatabase(requireActivity()));
+                            itemAdapter.setData(listItems);
+                            ResourceUtils.hiddenProgressDialog(progressDialog);
+                        }
+                    }
                 }
-                ResourceUtils.hiddenProgressDialog(progressDialog);
-            }
 
-            @Override
-            public void onFailure(Call<List<Item>> call, Throwable t) {
-                showSnackBar(getResources().getString(R.string.co_loi_xay_ra));
-                ResourceUtils.hiddenProgressDialog(progressDialog);
-            }
-        });
+                @Override
+                public void onFailure(Call<Result> call, Throwable t) {
+                    ResourceUtils.hiddenProgressDialog(progressDialog);
+                }
+            });
+        } else {
+            listItems.clear();
+            listItems.addAll(ResourceUtils.getAllItemFromRoomDatabase(requireActivity()));
+            itemAdapter.setData(listItems);
+            ResourceUtils.hiddenProgressDialog(progressDialog);
+            Log.d(Const.LOG_TAG, "LIST ITEM GET IN DATABASE WHEN NOT NETWORK = " + listItems.size());
+        }
     }
 
     private void initView() {
@@ -200,9 +206,6 @@ public class ItemFragment extends Fragment implements View.OnClickListener, OnSp
         btnMinusDlg.setOnClickListener(this);
         btnSubmitAddDlg.setOnClickListener(this);
         unitSpinner.setOnSpinnerItemSelectedListener(this);
-
-        btnMinusDlg.setTransformationMethod(null);
-        btnMinusDlg.setTransformationMethod(null);
     }
 
     @Override
@@ -232,7 +235,8 @@ public class ItemFragment extends Fragment implements View.OnClickListener, OnSp
     }
 
     private void onClickBarCodeScanner() {
-        startActivity(new Intent(requireActivity(), ScannerActivity.class));
+        Intent intent = new Intent(requireActivity(), ScannerActivity.class);
+        startActivityForResult(intent, Const.REQUEST_CODE.REQUEST_CODE_SCANNER);
     }
 
     private void onClickButtonTotal() {
@@ -301,6 +305,10 @@ public class ItemFragment extends Fragment implements View.OnClickListener, OnSp
             quyCach = itemInCart.getItem().getQuyCach1();
             giaQuyDoi = itemInCart.getItem().getGiaQuyDoi1();
         }
+        if (itemInCart.getItem().getUnit2Obj() != null && itemInCart.getItem().getUnit2Obj().getId().equals(unitChoose.getId())) {
+            quyCach = itemInCart.getItem().getQuyCach2();
+            giaQuyDoi = itemInCart.getItem().getGiaQuyDoi2();
+        }
         if (itemInCart.getItem().getUnitMinObj() != null && itemInCart.getItem().getUnitMinObj().getId().equals(unitChoose.getId())) {
             quyCach = 1;
             giaQuyDoi = itemInCart.getItem().getGiaBan();
@@ -318,14 +326,23 @@ public class ItemFragment extends Fragment implements View.OnClickListener, OnSp
         tvTotalPriceDlg.setText(StringFormatUtils.convertToStringMoneyVND(totalPrice));
     }
 
-    public static void calculatorCurrentTotalPrice(List<ItemInCart> lstItemCart) {
-        long totalPrice = 0L;
-        if (lstItemCart != null && !lstItemCart.isEmpty()) {
-            for (ItemInCart obj : lstItemCart) {
-                totalPrice += obj.getTotal();
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == Const.REQUEST_CODE.REQUEST_CODE_SCANNER) {
+            ItemEntity itemEntity;
+            String barcode = data.getStringExtra("BARCODE");
+            itemEntity = BarcodeDatabase.getInstance(requireActivity()).barcodeDAO().findItemEntityByBarcode(barcode.trim());
+            if (itemEntity == null) {
+                itemEntity = BarcodeDatabase.getInstance(requireActivity()).barcodeDAO().findItemEntityByBarcodeSub(barcode.trim());
+            }
+            if (itemEntity != null) {
+                buildDialog(ResourceUtils.convertItemEntityToItem(unitEntityMap, itemEntity));
+                ResourceUtils.showAlertDialog(addItemDialog);
+            } else {
+                showSnackBar(getResources().getString(R.string.khong_tim_thay_sp));
             }
         }
-        btnTotal.setText(lstItemCart.size() + " sản phẩm = " + StringFormatUtils.convertToStringMoneyVND(totalPrice));
     }
 
     private void showSnackBar(String text) {
@@ -338,5 +355,32 @@ public class ItemFragment extends Fragment implements View.OnClickListener, OnSp
         super.onDestroy();
         ResourceUtils.destroyAlertDialog(addItemDialog);
         ResourceUtils.destroyProgressDialog(progressDialog);
+    }
+
+    private void buildDialog(Item itemClick) {
+        itemInCart = new ItemInCart();
+        itemInCart = ItemInCart.builder().id(itemClick.getId()).quantity(1L).item(itemClick).price(itemClick.getGiaBan()).total(itemClick.getGiaBan())
+                .unitChoose(itemClick.getUnitDefaultObj() != null ? itemClick.getUnitDefaultObj() : new Unit())
+                .unitCoSo(itemClick.getUnitMin()).heSoCoSo(1L).heSoCoSo(ResourceUtils.buildHeSoCoSoForItemInCart(itemClick)).build();
+
+        tvQuantityDlg.setText(String.valueOf(1L));
+        tvPriceDlg.setText(StringFormatUtils.convertToStringMoneyVND(itemClick.getGiaBan()));
+        tvTotalPriceDlg.setText(StringFormatUtils.convertToStringMoneyVND(itemInCart.getTotal()));
+        tvNameDlg.setText(itemInCart.getItem().getName() != null ? itemInCart.getItem().getName() : "");
+
+        List<Unit> lstUnits = new ArrayList<>(ResourceUtils.buildListUnitInItem(itemInCart));
+        unitSpinner.attachDataSource(lstUnits);
+        unitSpinner.setSelectedIndex(0);
+    }
+
+
+    public static void calculatorCurrentTotalPrice(List<ItemInCart> lstItemCart) {
+        long totalPrice = 0L;
+        if (lstItemCart != null && !lstItemCart.isEmpty()) {
+            for (ItemInCart obj : lstItemCart) {
+                totalPrice += obj.getTotal();
+            }
+        }
+        btnTotal.setText(lstItemCart.size() + " sản phẩm = " + StringFormatUtils.convertToStringMoneyVND(totalPrice));
     }
 }

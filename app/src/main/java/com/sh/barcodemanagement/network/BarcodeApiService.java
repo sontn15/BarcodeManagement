@@ -7,7 +7,7 @@ import com.sh.barcodemanagement.model.Item;
 import com.sh.barcodemanagement.model.Result;
 import com.sh.barcodemanagement.model.Store;
 import com.sh.barcodemanagement.model.Unit;
-import com.sh.barcodemanagement.network.request.BillCreateUpdateRequest;
+import com.sh.barcodemanagement.network.request.BillRequest;
 
 import java.util.List;
 
@@ -34,7 +34,7 @@ public interface BarcodeApiService {
                                 @Path("barcode") String barcode);
 
     @POST("stores/bills")
-    Call<Bill> createOrUpdateBill(@Body BillCreateUpdateRequest request);
+    Call<Bill> createOrUpdateBill(@Body BillRequest request);
 
     @GET("stores/{storeId}/units")
     Call<List<Unit>> findAllUnits(@Path("storeId") Long storeId);

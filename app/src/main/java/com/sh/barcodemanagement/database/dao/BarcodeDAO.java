@@ -31,5 +31,11 @@ public interface BarcodeDAO {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertListBarCodes(List<BarcodeEntity> barcodeEntities);
-    
+
+    @Query("SELECT * FROM item where barcode = :barcode")
+    ItemEntity findItemEntityByBarcode(String barcode);
+
+    @Query("SELECT a.* FROM item a INNER JOIN barcode b ON a.code = b.itemCode and b.barcode = :barcode")
+    ItemEntity findItemEntityByBarcodeSub(String barcode);
+
 }

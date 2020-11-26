@@ -35,9 +35,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
     }
 
     public void setData(List<Item> lstItems) {
-        this.lstItems = new ArrayList<>();
         this.lstItems = lstItems;
-        this.lstFiltered = lstItems;
         notifyDataSetChanged();
     }
 
@@ -58,7 +56,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
         holder.tvDonVi.setText((item.getUnitDefaultObj() != null && item.getUnitDefaultObj().getName() != null) ?
                 (item.getUnitDefaultObj().getName()) : "Không có đơn vị");
 
-        holder.itemView.setOnClickListener(view -> onItemClickListener.onClickItem(position));
+        holder.itemView.setOnClickListener(view -> onItemClickListener.onClickItem(item));
     }
 
     @Override
@@ -71,7 +69,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
     }
 
     public interface OnItemClickListener {
-        void onClickItem(int position);
+        void onClickItem(Item item);
     }
 
 

@@ -1,6 +1,7 @@
 package com.sh.barcodemanagement.ui.activity;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 
@@ -10,6 +11,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.google.zxing.Result;
+import com.sh.barcodemanagement.utils.Const;
 
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
 
@@ -33,8 +35,10 @@ public class ScannerActivity extends AppCompatActivity implements ZXingScannerVi
 
     @Override
     public void handleResult(Result result) {
-//        MainActivity.resulttextview.setText(result.getText());
-        onBackPressed();
+        Intent intent = new Intent();
+        intent.putExtra("BARCODE", result.getText());
+        setResult(Const.REQUEST_CODE.REQUEST_CODE_SCANNER, intent);
+        finish();
     }
 
     @Override

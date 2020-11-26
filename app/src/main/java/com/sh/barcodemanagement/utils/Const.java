@@ -63,4 +63,8 @@ public class Const {
         public static final String KEY_STORE_ID = "storeId";
     }
 
+    public static class REQUEST_CODE {
+        public static final int REQUEST_CODE_SCANNER = 10;
+    }
+
 }
